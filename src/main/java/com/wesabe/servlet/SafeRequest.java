@@ -58,12 +58,14 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	@Override
 	public String getHeader(String name) {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize header values
+		// value =~ ^[a-zA-Z0-9()\\-=\\*\\.\\?;,+\\/:&_ ]*$
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
 	public Enumeration<?> getHeaderNames() {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize header names
+		// name =~ ^[a-zA-Z0-9\\-_]{0,32}$
 		throw new UnsupportedOperationException();
 	}
 	
