@@ -11,16 +11,18 @@ import com.wesabe.servlet.normalizers.util.CaseInsensitiveSet;
  *
  */
 public class MethodNormalizer implements Normalizer<String> {
-	private static final Locale METHOD_LOCALE = Locale.US;
-	private static final CaseInsensitiveSet METHOD_NAMES = CaseInsensitiveSet.of(METHOD_LOCALE, "GET", "PUT", "POST", "DELETE", "HEAD", "OPTIONS");
+	private static final CaseInsensitiveSet METHODS = CaseInsensitiveSet.of(
+		Locale.US,
+		"GET", "PUT", "POST", "DELETE", "HEAD", "OPTIONS"
+	);
 	
 	@Override
 	public String normalize(String method) throws ValidationException {
-		if (METHOD_NAMES.contains(method)) {
-			return method.toUpperCase(METHOD_LOCALE);
+		if (METHODS.contains(method)) {
+			return METHODS.uppercase(method);
 		}
 		
-		throw new ValidationException(method, "not a member of " + METHOD_NAMES);
+		throw new ValidationException(method, "not a member of " + METHODS);
 	}
 
 }
