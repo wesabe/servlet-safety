@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
+import com.wesabe.servlet.BadRequestException;
 import com.wesabe.servlet.SafeRequest;
 
 @RunWith(Enclosed.class)
@@ -24,20 +25,32 @@ public class SafeRequestTest {
 		}
 	}
 	
-	
-	public static class Getting_The_Authentication_Type extends Context {
-		@Override
+	public static class Getting_The_Method extends Context {
 		@Before
+		@Override
 		public void setup() throws Exception {
 			super.setup();
-			when(servletRequest.getAuthType()).thenReturn("Basic");
 		}
 		
 		@Test
-		public void itReturnsTheServletRequestsAuthType() throws Exception {
-			assertEquals("Basic", request.getAuthType());
+		public void itNormalizesTheMethodName() throws Exception {
+			when(servletRequest.getMethod()).thenReturn("get");
 			
-			verify(servletRequest).getAuthType();
+			assertEquals("GET", request.getMethod());
+			
+			verify(servletRequest).getMethod();
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionIfTheMethodIsInvalid() throws Exception {
+			when(servletRequest.getMethod()).thenReturn("poop");
+			
+			try {
+				request.getMethod();
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+			}
 		}
 	}
 }

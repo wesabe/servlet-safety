@@ -1,293 +1,161 @@
 package com.wesabe.servlet;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.Principal;
 import java.util.Enumeration;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
 
-public class SafeRequest implements HttpServletRequest {
+import com.wesabe.servlet.normalizers.MethodNormalizer;
+import com.wesabe.servlet.normalizers.ValidationException;
+
+public class SafeRequest extends HttpServletRequestWrapper {
+	private static final MethodNormalizer METHOD_NORMALIZER = new MethodNormalizer();
+	
 	private final HttpServletRequest request;
 	
 	public SafeRequest(HttpServletRequest request) {
+		super(request);
 		this.request = request;
 	}
 	
-	public String getAuthType() {
-		return request.getAuthType();
-	}
-
+	@Override
 	public String getContextPath() {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize context path
+		throw new UnsupportedOperationException();
 	}
-
+	
+	@Override
 	public Cookie[] getCookies() {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize cookies
+		throw new UnsupportedOperationException();
 	}
-
-	public long getDateHeader(String name) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
+	
+	@Override
 	public String getHeader(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize header values
+		throw new UnsupportedOperationException();
 	}
-
+	
+	@Override
 	public Enumeration<?> getHeaderNames() {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize header names
+		throw new UnsupportedOperationException();
 	}
-
+	
+	@Override
 	public Enumeration<?> getHeaders(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize header values
+		throw new UnsupportedOperationException();
 	}
-
-	public int getIntHeader(String name) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
+	
+	@Override
 	public String getMethod() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return METHOD_NORMALIZER.normalize(super.getMethod());
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
-
-	public String getPathInfo() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getPathTranslated() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getQueryString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getRemoteUser() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getRequestURI() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public StringBuffer getRequestURL() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getRequestedSessionId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getServletPath() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public HttpSession getSession() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public HttpSession getSession(boolean create) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Principal getUserPrincipal() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public boolean isRequestedSessionIdFromCookie() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean isRequestedSessionIdFromURL() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean isRequestedSessionIdFromUrl() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean isRequestedSessionIdValid() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean isUserInRole(String role) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public Object getAttribute(String name) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Enumeration<?> getAttributeNames() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getCharacterEncoding() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public int getContentLength() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public String getContentType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public ServletInputStream getInputStream() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getLocalAddr() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getLocalName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public int getLocalPort() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public Locale getLocale() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Enumeration<?> getLocales() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
+	@Override
 	public String getParameter(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter values
+		throw new UnsupportedOperationException();
 	}
-
+	
+	@Override
 	public Map<?, ?> getParameterMap() {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter values
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter names
+		throw new UnsupportedOperationException();
 	}
-
+	
+	@Override
 	public Enumeration<?> getParameterNames() {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter names
+		throw new UnsupportedOperationException();
 	}
-
+	
+	@Override
 	public String[] getParameterValues(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter values
+		throw new UnsupportedOperationException();
 	}
-
-	public String getProtocol() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	@Override
+	public String getPathInfo() {
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize path info
+		throw new UnsupportedOperationException();
 	}
-
-	public BufferedReader getReader() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	
+	@Override
+	public String getQueryString() {
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize query string
+		throw new UnsupportedOperationException();
 	}
-
-	public String getRealPath(String path) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getRemoteAddr() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getRemoteHost() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public int getRemotePort() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
+	
+	@Override
 	public RequestDispatcher getRequestDispatcher(String path) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize request dispatcher
+		throw new UnsupportedOperationException();
 	}
-
+	
+	@Override
+	public String getRequestedSessionId() {
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize session id
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public String getRequestURI() {
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize request uri
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public StringBuffer getRequestURL() {
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize request url
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
 	public String getScheme() {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize scheme
+		throw new UnsupportedOperationException();
 	}
-
+	
+	@Override
 	public String getServerName() {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize server name
+		throw new UnsupportedOperationException();
 	}
-
+	
+	@Override
 	public int getServerPort() {
-		// TODO Auto-generated method stub
-		return 0;
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize server port
+		throw new UnsupportedOperationException();
 	}
-
-	public boolean isSecure() {
-		// TODO Auto-generated method stub
-		return false;
+	
+	@Override
+	public String getServletPath() {
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize servlet path
+		throw new UnsupportedOperationException();
 	}
-
-	public void removeAttribute(String name) {
-		// TODO Auto-generated method stub
-
+	
+	
+	@Override
+	public HttpSession getSession() {
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize session
+		throw new UnsupportedOperationException();
 	}
-
-	public void setAttribute(String name, Object o) {
-		// TODO Auto-generated method stub
-
+	
+	@Override
+	public HttpSession getSession(boolean create) {
+		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize session
+		throw new UnsupportedOperationException();
 	}
-
-	public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
-		// TODO Auto-generated method stub
-
-	}
-
 }
