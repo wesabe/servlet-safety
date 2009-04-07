@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import com.google.common.collect.Lists;
 import com.wesabe.servlet.normalizers.HeaderNameNormalizer;
+import com.wesabe.servlet.normalizers.HeaderValueNormalizer;
 import com.wesabe.servlet.normalizers.HostnameNormalizer;
 import com.wesabe.servlet.normalizers.MethodNormalizer;
 import com.wesabe.servlet.normalizers.PortNormalizer;
@@ -25,6 +26,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	private static final PortNormalizer PORT_NORMALIZER = new PortNormalizer();
 	private static final HostnameNormalizer HOSTNAME_NORMALIZER = new HostnameNormalizer();
 	private static final HeaderNameNormalizer HEADER_NAME_NORMALIZER = HeaderNameNormalizer.requestNormalizer();
+	private static final HeaderValueNormalizer HEADER_VALUE_NORMALIZER = new HeaderValueNormalizer();
 	
 	private final HttpServletRequest request;
 	
@@ -61,9 +63,11 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public String getHeader(String name) {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize header values
-		// value =~ ^[a-zA-Z0-9()\\-=\\*\\.\\?;,+\\/:&_ ]*$
-		throw new UnsupportedOperationException();
+		try {
+			return HEADER_VALUE_NORMALIZER.normalize(super.getHeader(name));
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override

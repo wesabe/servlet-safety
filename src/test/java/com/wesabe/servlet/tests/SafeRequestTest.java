@@ -281,4 +281,30 @@ public class SafeRequestTest {
 			}
 		}
 	}
+	
+	public static class Getting_A_Header_Value extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+			
+			when(servletRequest.getHeader("Accept")).thenReturn("application/json");
+			when(servletRequest.getHeader("User-Agent")).thenReturn("MAL\0\0ICE");
+		}
+		
+		@Test
+		public void itPassesValidHeadersStraightThrough() throws Exception {
+			assertEquals("application/json", request.getHeader("Accept"));
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionOnInvalidValues() throws Exception {
+			try {
+				request.getHeader("User-Agent");
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+			}
+		}
+	}
 }
