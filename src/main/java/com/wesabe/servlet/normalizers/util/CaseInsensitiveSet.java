@@ -52,6 +52,14 @@ public class CaseInsensitiveSet extends ForwardingSet<String> {
 	public Locale getLocale() {
 		return locale;
 	}
+	
+	public String lowercase(String s) {
+		return s.toLowerCase(locale);
+	}
+	
+	public String uppercase(String s) {
+		return s.toUpperCase(locale);
+	}
 
 	@Override
 	protected Set<String> delegate() {
