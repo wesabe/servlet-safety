@@ -255,18 +255,11 @@ public class SafeRequestTest {
 		}
 		
 		@Test
-		public void itDowncasesValidHeaders() throws Exception {
+		public void itEnumeratesValidHeaders() throws Exception {
 			when(servletRequest.getHeaderNames()).thenReturn(Collections.enumeration(ImmutableList.of("Accept", "User-Agent")));
 			
-			assertEquals(ImmutableList.of("accept", "user-agent"), enumerationToList(request.getHeaderNames()));
+			assertEquals(ImmutableList.of("Accept", "User-Agent"), enumerationToList(request.getHeaderNames()));
 			
-		}
-		
-		@Test
-		public void itDropsInvalidHeaders() throws Exception {
-			when(servletRequest.getHeaderNames()).thenReturn(Collections.enumeration(ImmutableList.of("Accept", "Age")));
-			
-			assertEquals(ImmutableList.of("accept"), enumerationToList(request.getHeaderNames()));
 		}
 		
 		@Test

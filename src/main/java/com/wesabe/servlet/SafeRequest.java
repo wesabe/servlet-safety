@@ -25,7 +25,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	private static final SchemeNormalizer SCHEME_NORMALIZER = new SchemeNormalizer();
 	private static final PortNormalizer PORT_NORMALIZER = new PortNormalizer();
 	private static final HostnameNormalizer HOSTNAME_NORMALIZER = new HostnameNormalizer();
-	private static final HeaderNameNormalizer HEADER_NAME_NORMALIZER = HeaderNameNormalizer.requestNormalizer();
+	private static final HeaderNameNormalizer HEADER_NAME_NORMALIZER = new HeaderNameNormalizer();
 	private static final HeaderValueNormalizer HEADER_VALUE_NORMALIZER = new HeaderValueNormalizer();
 	
 	private final HttpServletRequest request;
@@ -76,11 +76,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 			final List<String> names = Lists.newLinkedList();
 			final Enumeration<?> rawNames = super.getHeaderNames();
 			while (rawNames.hasMoreElements()) {
-				final String rawName = (String) rawNames.nextElement();
-				final String name = HEADER_NAME_NORMALIZER.normalize(rawName);
-				if (name != null) {
-					names.add(name);
-				}
+				names.add(HEADER_NAME_NORMALIZER.normalize((String) rawNames.nextElement()));
 			}
 			return Collections.enumeration(names);
 		} catch (ValidationException e) {
