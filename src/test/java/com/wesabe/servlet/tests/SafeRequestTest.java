@@ -53,4 +53,33 @@ public class SafeRequestTest {
 			}
 		}
 	}
+	
+	public static class Getting_The_Scheme extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itNormalizesTheScheme() throws Exception {
+			when(servletRequest.getScheme()).thenReturn("http");
+			
+			assertEquals("http", request.getScheme());
+			
+			verify(servletRequest).getScheme();
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionIfTheSchemeIsInvalid() throws Exception {
+			when(servletRequest.getScheme()).thenReturn("poop");
+			
+			try {
+				request.getScheme();
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+			}
+		}
+	}
 }

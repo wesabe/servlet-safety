@@ -10,10 +10,12 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
 
 import com.wesabe.servlet.normalizers.MethodNormalizer;
+import com.wesabe.servlet.normalizers.SchemeNormalizer;
 import com.wesabe.servlet.normalizers.ValidationException;
 
 public class SafeRequest extends HttpServletRequestWrapper {
 	private static final MethodNormalizer METHOD_NORMALIZER = new MethodNormalizer();
+	private static final SchemeNormalizer SCHEME_NORMALIZER = new SchemeNormalizer();
 	
 	private final HttpServletRequest request;
 	
@@ -124,8 +126,11 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public String getScheme() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize scheme
-		throw new UnsupportedOperationException();
+		try {
+			return SCHEME_NORMALIZER.normalize(super.getScheme());
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override
