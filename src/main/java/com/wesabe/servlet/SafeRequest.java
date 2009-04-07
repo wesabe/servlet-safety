@@ -32,12 +32,17 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	@Override
 	public String getContextPath() {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize context path
+		// path =~ ^[a-zA-Z0-9.\\-_]$
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
 	public Cookie[] getCookies() {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize cookies
+		// name =~ ^[a-zA-Z0-9\\-_]{0,32}$
+		// value =~ ^[a-zA-Z0-9\\-\\/+=_ ]*$
+		// domain = hostname
+		// path = HTTP header value
 		throw new UnsupportedOperationException();
 	}
 	
@@ -89,6 +94,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	@Override
 	public String getParameter(String name) {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter values
+		// param value = ^[a-zA-Z0-9.\\-\\/+=_ ]*$
 		throw new UnsupportedOperationException();
 	}
 	
@@ -102,6 +108,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	@Override
 	public Enumeration<?> getParameterNames() {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter names
+		// param name =~ ^[a-zA-Z0-9_]{0,32}$
 		throw new UnsupportedOperationException();
 	}
 	
@@ -114,6 +121,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	@Override
 	public String getPathInfo() {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize path info
+		// path =~ ^[a-zA-Z0-9.\\-_]$
 		throw new UnsupportedOperationException();
 	}
 	
@@ -136,6 +144,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	@Override
 	public String getRequestedSessionId() {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize session id
+		// id =~ ^[A-Z0-9]{10,30}$
 		throw new UnsupportedOperationException();
 	}
 	
