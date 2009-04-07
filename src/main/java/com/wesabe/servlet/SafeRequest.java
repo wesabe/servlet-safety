@@ -64,7 +64,14 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	@Override
 	public String getHeader(String name) {
 		try {
-			return HEADER_VALUE_NORMALIZER.normalize(super.getHeader(name));
+			final String validName;
+			try {
+				validName = HEADER_NAME_NORMALIZER.normalize(name);
+			} catch (ValidationException e) {
+				throw new IllegalArgumentException(e);
+			}
+			
+			return HEADER_VALUE_NORMALIZER.normalize(super.getHeader(validName));
 		} catch (ValidationException e) {
 			throw new BadRequestException(request, e);
 		}

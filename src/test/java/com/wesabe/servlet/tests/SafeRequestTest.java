@@ -299,5 +299,15 @@ public class SafeRequestTest {
 				assertSame(servletRequest, e.getBadRequest());
 			}
 		}
+		
+		@Test
+		public void itThrowsAnIllegalArgumentExceptionWhenAskedForTheValueOfAMalformedHeader() throws Exception {
+			try {
+				request.getHeader("User-Agent\0");
+				fail("should have thrown an IllegalArgumentException, but didn't");
+			} catch (IllegalArgumentException e) {
+				assertTrue(true);
+			}
+		}
 	}
 }
