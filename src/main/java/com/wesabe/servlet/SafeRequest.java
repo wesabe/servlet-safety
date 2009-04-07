@@ -7,12 +7,11 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpSession;
 
 import com.wesabe.servlet.normalizers.HostnameNormalizer;
 import com.wesabe.servlet.normalizers.MethodNormalizer;
-import com.wesabe.servlet.normalizers.SchemeNormalizer;
 import com.wesabe.servlet.normalizers.PortNormalizer;
+import com.wesabe.servlet.normalizers.SchemeNormalizer;
 import com.wesabe.servlet.normalizers.ValidationException;
 
 public class SafeRequest extends HttpServletRequestWrapper {
