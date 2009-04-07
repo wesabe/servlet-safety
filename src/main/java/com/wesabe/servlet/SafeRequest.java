@@ -192,17 +192,4 @@ public class SafeRequest extends HttpServletRequestWrapper {
 		// REVIEW coda@wesabe.com -- Apr 6, 2009: Figure out what servlet path normalization means
 		throw new UnsupportedOperationException();
 	}
-	
-	
-	@Override
-	public HttpSession getSession() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize session
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public HttpSession getSession(boolean create) {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize session
-		throw new UnsupportedOperationException();
-	}
 }
