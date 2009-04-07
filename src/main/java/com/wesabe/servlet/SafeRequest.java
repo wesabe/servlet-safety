@@ -170,7 +170,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public String getServletPath() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize servlet path
+		// REVIEW coda@wesabe.com -- Apr 6, 2009: Figure out what servlet path normalization means
 		throw new UnsupportedOperationException();
 	}
 	
