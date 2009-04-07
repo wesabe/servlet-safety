@@ -11,11 +11,13 @@ import javax.servlet.http.HttpSession;
 
 import com.wesabe.servlet.normalizers.MethodNormalizer;
 import com.wesabe.servlet.normalizers.SchemeNormalizer;
+import com.wesabe.servlet.normalizers.PortNormalizer;
 import com.wesabe.servlet.normalizers.ValidationException;
 
 public class SafeRequest extends HttpServletRequestWrapper {
 	private static final MethodNormalizer METHOD_NORMALIZER = new MethodNormalizer();
 	private static final SchemeNormalizer SCHEME_NORMALIZER = new SchemeNormalizer();
+	private static final PortNormalizer PORT_NORMALIZER = new PortNormalizer();
 	
 	private final HttpServletRequest request;
 	
@@ -141,8 +143,11 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public int getServerPort() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize server port
-		throw new UnsupportedOperationException();
+		try {
+			return PORT_NORMALIZER.normalize(super.getServerPort());
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override

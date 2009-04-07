@@ -82,4 +82,33 @@ public class SafeRequestTest {
 			}
 		}
 	}
+	
+	public static class Getting_The_Server_Port extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itNormalizesTheServerPort() throws Exception {
+			when(servletRequest.getServerPort()).thenReturn(80);
+			
+			assertEquals(80, request.getServerPort());
+			
+			verify(servletRequest).getServerPort();
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionIfTheSchemeIsInvalid() throws Exception {
+			when(servletRequest.getServerPort()).thenReturn(1112228888);
+			
+			try {
+				request.getServerPort();
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+			}
+		}
+	}
 }
