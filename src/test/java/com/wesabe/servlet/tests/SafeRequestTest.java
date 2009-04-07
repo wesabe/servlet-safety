@@ -1,7 +1,12 @@
 package com.wesabe.servlet.tests;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
+
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
@@ -11,11 +16,21 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.wesabe.servlet.BadRequestException;
 import com.wesabe.servlet.SafeRequest;
 
 @RunWith(Enclosed.class)
 public class SafeRequestTest {
+	private static <E> List<E> enumerationToList(Enumeration<E> enumeration) {
+		List<E> items = Lists.newLinkedList();
+		while (enumeration.hasMoreElements()) {
+			items.add(enumeration.nextElement());
+		}
+		return items;
+	}
+	
 	private static abstract class Context {
 		protected SafeRequest request;
 		protected HttpServletRequest servletRequest;
@@ -229,6 +244,41 @@ public class SafeRequestTest {
 			assertNull(request.getRequestDispatcher("../WEB-INF/thing"));
 			
 			verify(servletRequest, never()).getRequestDispatcher(anyString());
+		}
+	}
+	
+	public static class Getting_A_List_Of_Header_Names extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itDowncasesValidHeaders() throws Exception {
+			when(servletRequest.getHeaderNames()).thenReturn(Collections.enumeration(ImmutableList.of("Accept", "User-Agent")));
+			
+			assertEquals(ImmutableList.of("accept", "user-agent"), enumerationToList(request.getHeaderNames()));
+			
+		}
+		
+		@Test
+		public void itDropsInvalidHeaders() throws Exception {
+			when(servletRequest.getHeaderNames()).thenReturn(Collections.enumeration(ImmutableList.of("Accept", "Age")));
+			
+			assertEquals(ImmutableList.of("accept"), enumerationToList(request.getHeaderNames()));
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionOnMalformedHeaders() throws Exception {
+			when(servletRequest.getHeaderNames()).thenReturn(Collections.enumeration(ImmutableList.of("Accept", "Age\0DEATH")));
+			
+			try {
+				request.getHeaderNames();
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+			}
 		}
 	}
 }

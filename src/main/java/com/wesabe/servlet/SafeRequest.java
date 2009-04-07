@@ -1,6 +1,8 @@
 package com.wesabe.servlet;
 
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
@@ -8,6 +10,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import com.google.common.collect.Lists;
+import com.wesabe.servlet.normalizers.HeaderNameNormalizer;
 import com.wesabe.servlet.normalizers.HostnameNormalizer;
 import com.wesabe.servlet.normalizers.MethodNormalizer;
 import com.wesabe.servlet.normalizers.PortNormalizer;
@@ -20,6 +24,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	private static final SchemeNormalizer SCHEME_NORMALIZER = new SchemeNormalizer();
 	private static final PortNormalizer PORT_NORMALIZER = new PortNormalizer();
 	private static final HostnameNormalizer HOSTNAME_NORMALIZER = new HostnameNormalizer();
+	private static final HeaderNameNormalizer HEADER_NAME_NORMALIZER = HeaderNameNormalizer.requestNormalizer();
 	
 	private final HttpServletRequest request;
 	
@@ -63,9 +68,20 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public Enumeration<String> getHeaderNames() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize header names
-		// name =~ ^[a-zA-Z0-9\\-_]{0,32}$
-		throw new UnsupportedOperationException();
+		try {
+			final List<String> names = Lists.newLinkedList();
+			final Enumeration<?> rawNames = super.getHeaderNames();
+			while (rawNames.hasMoreElements()) {
+				final String rawName = (String) rawNames.nextElement();
+				final String name = HEADER_NAME_NORMALIZER.normalize(rawName);
+				if (name != null) {
+					names.add(name);
+				}
+			}
+			return Collections.enumeration(names);
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override
