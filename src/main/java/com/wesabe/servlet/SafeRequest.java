@@ -16,6 +16,7 @@ import com.wesabe.servlet.normalizers.PortNormalizer;
 import com.wesabe.servlet.normalizers.ValidationException;
 
 public class SafeRequest extends HttpServletRequestWrapper {
+	private static final String REQUEST_DISPATCHER_PATH_PREFIX = "WEB-INF";
 	private static final MethodNormalizer METHOD_NORMALIZER = new MethodNormalizer();
 	private static final SchemeNormalizer SCHEME_NORMALIZER = new SchemeNormalizer();
 	private static final PortNormalizer PORT_NORMALIZER = new PortNormalizer();
@@ -119,13 +120,17 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	@Override
 	public String getQueryString() {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize query string
+		// split by '&', split by '=', URI decode/encode
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
 	public RequestDispatcher getRequestDispatcher(String path) {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize request dispatcher
-		throw new UnsupportedOperationException();
+		if (path.startsWith(REQUEST_DISPATCHER_PATH_PREFIX)) {
+            return request.getRequestDispatcher(path);
+        }
+		
+        return null;
 	}
 	
 	@Override

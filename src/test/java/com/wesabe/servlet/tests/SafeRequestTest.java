@@ -3,6 +3,7 @@ package com.wesabe.servlet.tests;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Before;
@@ -198,6 +199,36 @@ public class SafeRequestTest {
 			} catch (BadRequestException e) {
 				assertSame(servletRequest, e.getBadRequest());
 			}
+		}
+	}
+	
+	public static class Getting_The_Request_Dispatcher extends Context {
+		private RequestDispatcher dispatcher;
+		
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+			
+			this.dispatcher = mock(RequestDispatcher.class);
+		}
+		
+		@Test
+		public void itPassesThroughIfPathStartsWithWebInf() throws Exception {
+			when(servletRequest.getRequestDispatcher("WEB-INF/thing")).thenReturn(dispatcher);
+			
+			assertEquals(dispatcher, request.getRequestDispatcher("WEB-INF/thing"));
+			
+			verify(servletRequest).getRequestDispatcher("WEB-INF/thing");
+		}
+		
+		@Test
+		public void itReturnsNullIfPathDoesNotStartWithWebInf() throws Exception {
+			when(servletRequest.getRequestDispatcher(anyString())).thenReturn(dispatcher);
+			
+			assertNull(request.getRequestDispatcher("../WEB-INF/thing"));
+			
+			verify(servletRequest, never()).getRequestDispatcher(anyString());
 		}
 	}
 }
