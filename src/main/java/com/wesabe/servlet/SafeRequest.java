@@ -62,14 +62,14 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	}
 	
 	@Override
-	public Enumeration<?> getHeaderNames() {
+	public Enumeration<String> getHeaderNames() {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize header names
 		// name =~ ^[a-zA-Z0-9\\-_]{0,32}$
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public Enumeration<?> getHeaders(String name) {
+	public Enumeration<String> getHeaders(String name) {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize header values
 		throw new UnsupportedOperationException();
 	}
@@ -100,14 +100,14 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	}
 	
 	@Override
-	public Map<?, ?> getParameterMap() {
+	public Map<String, String[]> getParameterMap() {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter values
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter names
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public Enumeration<?> getParameterNames() {
+	public Enumeration<String> getParameterNames() {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter names
 		// param name =~ ^[a-zA-Z0-9_]{0,32}$
 		throw new UnsupportedOperationException();
