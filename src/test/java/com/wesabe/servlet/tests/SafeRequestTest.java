@@ -111,4 +111,64 @@ public class SafeRequestTest {
 			}
 		}
 	}
+	
+	public static class Getting_A_Date_Header extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itReturnsAnyParsedDateHeader() throws Exception {
+			when(servletRequest.getDateHeader("Last-Modified")).thenReturn(80L);
+			
+			assertEquals(80, request.getDateHeader("Last-Modified"));
+			
+			verify(servletRequest).getDateHeader("Last-Modified");
+		}
+		
+		@Test
+		public void itWrapsAFailedParseInABadRequestException() throws Exception {
+			when(servletRequest.getDateHeader("Last-Modified")).thenThrow(new IllegalArgumentException("no"));
+			
+			try {
+				request.getDateHeader("Last-Modified");
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+				assertTrue(e.getCause() instanceof IllegalArgumentException);
+			}
+		}
+	}
+	
+	public static class Getting_An_Int_Header extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itReturnsAnyParsedIntHeader() throws Exception {
+			when(servletRequest.getIntHeader("Age")).thenReturn(200);
+			
+			assertEquals(200, request.getIntHeader("Age"));
+			
+			verify(servletRequest).getIntHeader("Age");
+		}
+		
+		@Test
+		public void itWrapsAFailedParseInABadRequestException() throws Exception {
+			when(servletRequest.getIntHeader("Age")).thenThrow(new IllegalArgumentException("no"));
+			
+			try {
+				request.getIntHeader("Age");
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+				assertTrue(e.getCause() instanceof IllegalArgumentException);
+			}
+		}
+	}
 }

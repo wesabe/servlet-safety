@@ -39,6 +39,15 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	}
 	
 	@Override
+	public long getDateHeader(String name) {
+		try {
+			return super.getDateHeader(name);
+		} catch (IllegalArgumentException e) {
+			throw new BadRequestException(request, e);
+		}
+	}
+	
+	@Override
 	public String getHeader(String name) {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize header values
 		throw new UnsupportedOperationException();
@@ -54,6 +63,15 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	public Enumeration<?> getHeaders(String name) {
 		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize header values
 		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public int getIntHeader(String name) {
+		try {
+			return super.getIntHeader(name);
+		} catch (IllegalArgumentException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override
