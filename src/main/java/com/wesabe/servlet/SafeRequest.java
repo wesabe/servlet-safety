@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
 
+import com.wesabe.servlet.normalizers.HostnameNormalizer;
 import com.wesabe.servlet.normalizers.MethodNormalizer;
 import com.wesabe.servlet.normalizers.SchemeNormalizer;
 import com.wesabe.servlet.normalizers.PortNormalizer;
@@ -18,6 +19,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	private static final MethodNormalizer METHOD_NORMALIZER = new MethodNormalizer();
 	private static final SchemeNormalizer SCHEME_NORMALIZER = new SchemeNormalizer();
 	private static final PortNormalizer PORT_NORMALIZER = new PortNormalizer();
+	private static final HostnameNormalizer HOSTNAME_NORMALIZER = new HostnameNormalizer();
 	
 	private final HttpServletRequest request;
 	
@@ -155,8 +157,11 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public String getServerName() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize server name
-		throw new UnsupportedOperationException();
+		try {
+			return HOSTNAME_NORMALIZER.normalize(super.getServerName());
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override

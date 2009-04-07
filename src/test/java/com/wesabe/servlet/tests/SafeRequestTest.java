@@ -171,4 +171,33 @@ public class SafeRequestTest {
 			}
 		}
 	}
+	
+	public static class Getting_The_Server_Name extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itNormalizesTheServerName() throws Exception {
+			when(servletRequest.getServerName()).thenReturn("example.com");
+			
+			assertEquals("example.com", request.getServerName());
+			
+			verify(servletRequest).getServerName();
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionIfTheSchemeIsInvalid() throws Exception {
+			when(servletRequest.getServerName()).thenReturn("blah\0.com");
+			
+			try {
+				request.getServerName();
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+			}
+		}
+	}
 }
