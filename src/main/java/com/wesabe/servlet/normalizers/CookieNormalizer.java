@@ -68,8 +68,13 @@ public class CookieNormalizer implements Normalizer<Cookie> {
 		safeCookie.setVersion(cookie.getVersion());
 		
 		// unsafe attributes
-		safeCookie.setDomain(DOMAIN_NORMALIZER.normalize(cookie.getDomain()));
-		safeCookie.setPath(PATH_NORMALIZER.normalize(cookie.getPath()));
+		if (cookie.getDomain() != null) {
+			safeCookie.setDomain(DOMAIN_NORMALIZER.normalize(cookie.getDomain()));
+		}
+		
+		if (cookie.getPath() != null) {
+			safeCookie.setPath(PATH_NORMALIZER.normalize(cookie.getPath()));
+		}
 		
 		// REVIEW coda@wesabe.com -- Apr 8, 2009: Should we be dropping cookie comments?
 		

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import com.google.common.collect.Lists;
+import com.wesabe.servlet.normalizers.CookieNormalizer;
 import com.wesabe.servlet.normalizers.HeaderNameNormalizer;
 import com.wesabe.servlet.normalizers.HeaderValueNormalizer;
 import com.wesabe.servlet.normalizers.HostnameNormalizer;
@@ -27,6 +28,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	private static final HostnameNormalizer HOSTNAME_NORMALIZER = new HostnameNormalizer();
 	private static final HeaderNameNormalizer HEADER_NAME_NORMALIZER = new HeaderNameNormalizer();
 	private static final HeaderValueNormalizer HEADER_VALUE_NORMALIZER = new HeaderValueNormalizer();
+	private static final CookieNormalizer COOKIE_NORMALIZER = new CookieNormalizer();
 	
 	private final HttpServletRequest request;
 	
@@ -44,12 +46,20 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public Cookie[] getCookies() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize cookies
-		// name =~ ^[a-zA-Z0-9\\-_]{0,32}$
-		// value =~ ^[a-zA-Z0-9\\-\\/+=_ ]*$
-		// domain = hostname
-		// path = HTTP header value
-		throw new UnsupportedOperationException();
+		try {
+			final Cookie[] cookies = super.getCookies();
+			if (cookies == null) {
+				return new Cookie[0];
+			}
+			
+			for (int i = 0; i < cookies.length; i++) {
+				cookies[i] = COOKIE_NORMALIZER.normalize(cookies[i]);
+			}
+			
+			return cookies;
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override

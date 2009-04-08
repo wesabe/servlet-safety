@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Before;
@@ -345,6 +346,43 @@ public class SafeRequestTest {
 				fail("should have thrown an IllegalArgumentException, but didn't");
 			} catch (IllegalArgumentException e) {
 				assertTrue(true);
+			}
+		}
+	}
+	
+	public static class ContextName extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itReturnsAnEmptyArrayIsCookiesAreNull() throws Exception {
+			when(servletRequest.getCookies()).thenReturn(null);
+			
+			assertArrayEquals(new Cookie[0], request.getCookies());
+		}
+		
+		@Test
+		public void itReturnsAnArrayOfValidCookies() throws Exception {
+			when(servletRequest.getCookies()).thenReturn(new Cookie[] { new Cookie("sessionid", "blorp") });
+			
+			assertEquals("sessionid", request.getCookies()[0].getName());
+			assertEquals("blorp", request.getCookies()[0].getValue());
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionWithInvalidCookies() throws Exception {
+			final Cookie badCookie = mock(Cookie.class);
+			when(badCookie.getName()).thenReturn("\0\0");
+			when(servletRequest.getCookies()).thenReturn(new Cookie[] { badCookie });
+			
+			try {
+				request.getCookies();
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
 			}
 		}
 	}
