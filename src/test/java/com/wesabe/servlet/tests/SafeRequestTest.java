@@ -310,4 +310,42 @@ public class SafeRequestTest {
 			}
 		}
 	}
+	
+	public static class Getting_A_List_Of_Header_Values extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itEnumeratesValidHeaderValues() throws Exception {
+			when(servletRequest.getHeaders("Accept")).thenReturn(Collections.enumeration(ImmutableList.of("application/json", "application/xml")));
+			
+			assertEquals(ImmutableList.of("application/json", "application/xml"), enumerationToList(request.getHeaders("Accept")));
+			
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionOnMalformedHeaderValues() throws Exception {
+			when(servletRequest.getHeaders("Accept")).thenReturn(Collections.enumeration(ImmutableList.of("application/json", "Age\0DEATH")));
+			
+			try {
+				request.getHeaders("Accept");
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+			}
+		}
+		
+		@Test
+		public void itThrowsAnIllegalArgumentExceptionWhenAskedForTheValuesOfAMalformedHeader() throws Exception {
+			try {
+				request.getHeaders("User-Agent\0");
+				fail("should have thrown an IllegalArgumentException, but didn't");
+			} catch (IllegalArgumentException e) {
+				assertTrue(true);
+			}
+		}
+	}
 }

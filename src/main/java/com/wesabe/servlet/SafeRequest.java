@@ -64,12 +64,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	@Override
 	public String getHeader(String name) {
 		try {
-			final String validName;
-			try {
-				validName = HEADER_NAME_NORMALIZER.normalize(name);
-			} catch (ValidationException e) {
-				throw new IllegalArgumentException(e);
-			}
+			final String validName = getValidHeaderName(name);
 			
 			return HEADER_VALUE_NORMALIZER.normalize(super.getHeader(validName));
 		} catch (ValidationException e) {
@@ -93,8 +88,30 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public Enumeration<String> getHeaders(String name) {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize header values
-		throw new UnsupportedOperationException();
+		try {
+			final List<String> values = Lists.newLinkedList();
+			final String validName = getValidHeaderName(name);
+			
+			final Enumeration<?> rawValues = super.getHeaders(validName);
+			while (rawValues.hasMoreElements()) {
+				String rawValue = (String) rawValues.nextElement();
+				values.add(HEADER_VALUE_NORMALIZER.normalize(rawValue));
+			}
+			
+			return Collections.enumeration(values);
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
+	}
+
+	private String getValidHeaderName(String name) {
+		final String validName;
+		try {
+			validName = HEADER_NAME_NORMALIZER.normalize(name);
+		} catch (ValidationException e) {
+			throw new IllegalArgumentException(e);
+		}
+		return validName;
 	}
 	
 	@Override
