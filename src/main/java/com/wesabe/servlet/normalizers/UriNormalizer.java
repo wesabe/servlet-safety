@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
  */
 public class UriNormalizer extends UriFragmentNormalizer {
 	private static final char PATH_SEPARATOR = '/';
+	private static final int MAX_URI_LENGTH = 2000;
 	
 	/**
 	 * First, asserts that {@code uri} is composed of valid characters. Second,
@@ -51,8 +52,8 @@ public class UriNormalizer extends UriFragmentNormalizer {
 
 	private boolean isWellFormed(final String uri) {
 		try {
-			new URI(uri).getRawPath();
-			return true;
+			new URI(uri);
+			return uri.length() <= MAX_URI_LENGTH;
 		} catch (URISyntaxException e) {
 			return false;
 		}

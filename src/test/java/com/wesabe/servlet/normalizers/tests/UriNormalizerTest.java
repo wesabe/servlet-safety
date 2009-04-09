@@ -102,5 +102,20 @@ public class UriNormalizerTest {
 			assertThrowsException("/tags/%dfo%ee1");
 		}
 	}
+	
+	public static class Normalizing_URIs_Which_Are_Too_Long {
+		@Test
+		public void itThrowsAnException() throws Exception {
+			assertThrowsException(buildHugeURI());
+		}
 
+		private String buildHugeURI() {
+			final StringBuilder builder = new StringBuilder();
+			builder.append("/wh");
+			for (int i = 1; i <= 10000; i++) {
+				builder.append('e');
+			}
+			return builder.toString();
+		}
+	}
 }
