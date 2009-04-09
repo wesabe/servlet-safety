@@ -350,7 +350,7 @@ public class SafeRequestTest {
 		}
 	}
 	
-	public static class ContextName extends Context {
+	public static class Getting_A_List_Of_Cookies extends Context {
 		@Before
 		@Override
 		public void setup() throws Exception {
