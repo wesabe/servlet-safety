@@ -386,4 +386,31 @@ public class SafeRequestTest {
 			}
 		}
 	}
+	
+	public static class Getting_The_Request_URI extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itNormalizesTheURI() throws Exception {
+			when(servletRequest.getRequestURI()).thenReturn("/blah%7d");
+			
+			assertEquals("/blah%7D", request.getRequestURI());
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionWithAnInvalidRequestURI() throws Exception {
+			when(servletRequest.getRequestURI()).thenReturn("/blah%ee");
+			
+			try {
+				request.getRequestURI();
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+			}
+		}
+	}
 }

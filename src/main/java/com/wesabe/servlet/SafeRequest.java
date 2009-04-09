@@ -18,6 +18,7 @@ import com.wesabe.servlet.normalizers.HostnameNormalizer;
 import com.wesabe.servlet.normalizers.MethodNormalizer;
 import com.wesabe.servlet.normalizers.PortNormalizer;
 import com.wesabe.servlet.normalizers.SchemeNormalizer;
+import com.wesabe.servlet.normalizers.UriNormalizer;
 import com.wesabe.servlet.normalizers.ValidationException;
 
 public class SafeRequest extends HttpServletRequestWrapper {
@@ -29,6 +30,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	private static final HeaderNameNormalizer HEADER_NAME_NORMALIZER = new HeaderNameNormalizer();
 	private static final HeaderValueNormalizer HEADER_VALUE_NORMALIZER = new HeaderValueNormalizer();
 	private static final CookieNormalizer COOKIE_NORMALIZER = new CookieNormalizer();
+	private static final UriNormalizer URI_NORMALIZER = new UriNormalizer();
 	
 	private final HttpServletRequest request;
 	
@@ -201,8 +203,11 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public String getRequestURI() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize request uri
-		throw new UnsupportedOperationException();
+		try {
+			return URI_NORMALIZER.normalize(super.getRequestURI());
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override
