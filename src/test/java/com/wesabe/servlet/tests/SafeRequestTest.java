@@ -413,4 +413,38 @@ public class SafeRequestTest {
 			}
 		}
 	}
+	
+	public static class Getting_The_QueryString extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itPassesNullThrough() throws Exception {
+			when(servletRequest.getQueryString()).thenReturn(null);
+			
+			assertNull(request.getQueryString());
+		}
+		
+		@Test
+		public void itNormalizesTheQueryString() throws Exception {
+			when(servletRequest.getQueryString()).thenReturn("j=blah%7d");
+			
+			assertEquals("j=blah%7D", request.getQueryString());
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionWithAnInvalidQueryString() throws Exception {
+			when(servletRequest.getQueryString()).thenReturn("j=blah%ee");
+			
+			try {
+				request.getQueryString();
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+			}
+		}
+	}
 }

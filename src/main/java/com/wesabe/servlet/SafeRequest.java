@@ -11,15 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import com.google.common.collect.Lists;
-import com.wesabe.servlet.normalizers.CookieNormalizer;
-import com.wesabe.servlet.normalizers.HeaderNameNormalizer;
-import com.wesabe.servlet.normalizers.HeaderValueNormalizer;
-import com.wesabe.servlet.normalizers.HostnameNormalizer;
-import com.wesabe.servlet.normalizers.MethodNormalizer;
-import com.wesabe.servlet.normalizers.PortNormalizer;
-import com.wesabe.servlet.normalizers.SchemeNormalizer;
-import com.wesabe.servlet.normalizers.UriNormalizer;
-import com.wesabe.servlet.normalizers.ValidationException;
+import com.wesabe.servlet.normalizers.*;
 
 public class SafeRequest extends HttpServletRequestWrapper {
 	private static final String REQUEST_DISPATCHER_PATH_PREFIX = "WEB-INF";
@@ -31,6 +23,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	private static final HeaderValueNormalizer HEADER_VALUE_NORMALIZER = new HeaderValueNormalizer();
 	private static final CookieNormalizer COOKIE_NORMALIZER = new CookieNormalizer();
 	private static final UriNormalizer URI_NORMALIZER = new UriNormalizer();
+	private static final QueryStringNormalizer QUERY_STRING_NORMALIZER = new QueryStringNormalizer();
 	
 	private final HttpServletRequest request;
 	
@@ -180,9 +173,11 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public String getQueryString() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize query string
-		// split by '&', split by '=', URI decode/encode
-		throw new UnsupportedOperationException();
+		try {
+			return QUERY_STRING_NORMALIZER.normalize(super.getQueryString());
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override

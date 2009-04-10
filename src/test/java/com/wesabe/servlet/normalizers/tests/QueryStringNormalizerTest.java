@@ -26,9 +26,16 @@ public class QueryStringNormalizerTest {
 		}
 	}
 	
+	public static class Normalizing_A_Valid_Null_String {
+		@Test
+		public void itPassesItThrough() throws Exception {
+			assertNull(normalize(null));
+		}
+	}
+	
 	public static class Normalizing_A_Valid_Query_String {
 		@Test
-		public void itPassesThemThrough() throws Exception {
+		public void itPassesItThrough() throws Exception {
 			assertEquals("q=food", normalize("q=food"));
 			assertEquals("q=food&g=two", normalize("q=food&g=two"));
 		}
@@ -51,7 +58,7 @@ public class QueryStringNormalizerTest {
 	
 	public static class Normalizing_A_Paramless_Query_String {
 		@Test
-		public void itPassesThemThrough() throws Exception {
+		public void itPassesItThrough() throws Exception {
 			assertEquals("food", normalize("food"));
 		}
 	}
