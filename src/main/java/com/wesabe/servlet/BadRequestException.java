@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * An unchecked exception which is raised by {@link SafeRequest} and other
  * classes to indicate that a received {@link HttpServletRequest} cannot be
- * serviced as-is and should be injected as rejected to the client.
+ * serviced as-is and should be marked as rejected to the client.
  * 
  * @author coda
  *
