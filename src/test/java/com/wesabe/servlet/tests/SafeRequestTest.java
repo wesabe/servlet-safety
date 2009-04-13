@@ -604,4 +604,31 @@ public class SafeRequestTest {
 			}
 		}
 	}
+	
+	public static class Getting_The_Path_Info extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itPassesValidPathsThrough() throws Exception {
+			when(servletRequest.getPathInfo()).thenReturn("whee");
+			
+			assertEquals("whee", request.getPathInfo());
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionOnInvalidValues() throws Exception {
+			when(servletRequest.getPathInfo()).thenReturn("AHAHAHAH\0\0AHAHAHA");
+			
+			try {
+				request.getPathInfo();
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+			}
+		}
+	}
 }

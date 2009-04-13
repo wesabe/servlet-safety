@@ -29,6 +29,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	private static final ParameterNameNormalizer PARAM_NAME_NORMALIZER = new ParameterNameNormalizer();
 	private static final ParameterValueNormalizer PARAM_VALUE_NORMALIZER = new ParameterValueNormalizer();
 	private static final SessionIdNormalizer SESSION_ID_NORMALIZER = new SessionIdNormalizer();
+	private static final PathInfoNormalizer PATH_INFO_NORMALIZER = new PathInfoNormalizer();
 	
 	private final HttpServletRequest request;
 	
@@ -207,9 +208,11 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public String getPathInfo() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize path info
-		// path =~ ^[a-zA-Z0-9.\\-_]$
-		throw new UnsupportedOperationException();
+		try {
+			return PATH_INFO_NORMALIZER.normalize(super.getPathInfo());
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override
