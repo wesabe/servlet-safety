@@ -447,4 +447,32 @@ public class SafeRequestTest {
 			}
 		}
 	}
+	
+	public static class Getting_A_List_Of_Param_Names extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itEnumeratesValidHeaders() throws Exception {
+			when(servletRequest.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of("dingo", "woo")));
+			
+			assertEquals(ImmutableList.of("dingo", "woo"), enumerationToList(request.getParameterNames()));
+			
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionOnMalformedHeaders() throws Exception {
+			when(servletRequest.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of("dingo", "poison\0")));
+			
+			try {
+				request.getParameterNames();
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+			}
+		}
+	}
 }

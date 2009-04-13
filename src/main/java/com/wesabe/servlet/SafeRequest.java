@@ -24,6 +24,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	private static final CookieNormalizer COOKIE_NORMALIZER = new CookieNormalizer();
 	private static final UriNormalizer URI_NORMALIZER = new UriNormalizer();
 	private static final QueryStringNormalizer QUERY_STRING_NORMALIZER = new QueryStringNormalizer();
+	private static final ParameterNameNormalizer PARAM_NAME_NORMALIZER = new ParameterNameNormalizer();
 	
 	private final HttpServletRequest request;
 	
@@ -153,9 +154,16 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public Enumeration<String> getParameterNames() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter names
-		// param name =~ ^[a-zA-Z0-9_]{0,32}$
-		throw new UnsupportedOperationException();
+		try {
+			final List<String> names = Lists.newLinkedList();
+			final Enumeration<?> rawNames = super.getParameterNames();
+			while (rawNames.hasMoreElements()) {
+				names.add(PARAM_NAME_NORMALIZER.normalize((String) rawNames.nextElement()));
+			}
+			return Collections.enumeration(names);
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override
