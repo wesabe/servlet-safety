@@ -18,6 +18,8 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.wesabe.servlet.BadRequestException;
 import com.wesabe.servlet.SafeRequest;
@@ -508,6 +510,70 @@ public class SafeRequestTest {
 				fail("should have thrown an IllegalArgumentException, but didn't");
 			} catch (IllegalArgumentException e) {
 				assertTrue(true);
+			}
+		}
+	}
+	
+	public static class Getting_An_Array_Of_Param_Values extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+			
+			when(servletRequest.getParameterValues("dingo")).thenReturn(new String[] { "woo" });
+			when(servletRequest.getParameterValues("malice")).thenReturn(new String[] { "MAL\0\0ICE" });
+		}
+		
+		@Test
+		public void itPassesValidParametersStraightThrough() throws Exception {
+			assertArrayEquals(new String[] { "woo" }, request.getParameterValues("dingo"));
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionOnInvalidValues() throws Exception {
+			try {
+				request.getParameterValues("malice");
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+			}
+		}
+		
+		@Test
+		public void itThrowsAnIllegalArgumentExceptionWhenAskedForTheValueOfAMalformedParamName() throws Exception {
+			try {
+				request.getParameterValues("weird\0");
+				fail("should have thrown an IllegalArgumentException, but didn't");
+			} catch (IllegalArgumentException e) {
+				assertTrue(true);
+			}
+		}
+	}
+	
+	public static class Getting_A_Map_Of_Param_Values extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itPassesValidParametersStraightThrough() throws Exception {
+			when(servletRequest.getParameterMap()).thenReturn(ImmutableMap.of("dingo", new String[] { "woo" }));
+			
+			assertEquals(ImmutableSet.of("dingo"), request.getParameterMap().keySet());
+			assertArrayEquals(new String[] { "woo" }, request.getParameterMap().get("dingo"));
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionOnInvalidValues() throws Exception {
+			when(servletRequest.getParameterMap()).thenReturn(ImmutableMap.of("malice", new String[] { "MAL\0ICE" }));
+			
+			try {
+				request.getParameterMap();
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
 			}
 		}
 	}

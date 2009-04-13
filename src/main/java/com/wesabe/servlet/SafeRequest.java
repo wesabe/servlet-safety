@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.wesabe.servlet.normalizers.*;
 
 public class SafeRequest extends HttpServletRequestWrapper {
@@ -158,9 +160,21 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public Map<String, String[]> getParameterMap() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter values
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter names
-		throw new UnsupportedOperationException();
+		try {
+			final Map<?, ?> rawMap = super.getParameterMap();
+			final Map<String, String[]> map = Maps.newLinkedHashMap();
+			for (Entry<?, ?> parameter : rawMap.entrySet()) {
+				final String validName = PARAM_NAME_NORMALIZER.normalize((String) parameter.getKey());
+				final String[] values = (String[]) parameter.getValue();
+				for (int i = 0; i < values.length; i++) {
+					values[i] = PARAM_VALUE_NORMALIZER.normalize(values[i]);
+				}
+				map.put(validName, values);
+			}
+			return map;
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override
@@ -179,8 +193,15 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public String[] getParameterValues(String name) {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter values
-		throw new UnsupportedOperationException();
+		try {
+			final String[] values = super.getParameterValues(getValidParameterName(name));
+			for (int i = 0; i < values.length; i++) {
+				values[i] = PARAM_VALUE_NORMALIZER.normalize(values[i]);
+			}
+			return values;
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override
