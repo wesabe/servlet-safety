@@ -28,6 +28,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	private static final QueryStringNormalizer QUERY_STRING_NORMALIZER = new QueryStringNormalizer();
 	private static final ParameterNameNormalizer PARAM_NAME_NORMALIZER = new ParameterNameNormalizer();
 	private static final ParameterValueNormalizer PARAM_VALUE_NORMALIZER = new ParameterValueNormalizer();
+	private static final SessionIdNormalizer SESSION_ID_NORMALIZER = new SessionIdNormalizer();
 	
 	private final HttpServletRequest request;
 	
@@ -231,9 +232,11 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public String getRequestedSessionId() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize session id
-		// id =~ ^[A-Z0-9]{10,30}$
-		throw new UnsupportedOperationException();
+		try {
+			return SESSION_ID_NORMALIZER.normalize(super.getRequestedSessionId());
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override

@@ -577,4 +577,31 @@ public class SafeRequestTest {
 			}
 		}
 	}
+	
+	public static class Getting_The_Requested_Session_Id extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itPassesValidSessionIdsThrough() throws Exception {
+			when(servletRequest.getRequestedSessionId()).thenReturn("AHAHAHAHAHAHAHA");
+			
+			assertEquals("AHAHAHAHAHAHAHA", request.getRequestedSessionId());
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionOnInvalidValues() throws Exception {
+			when(servletRequest.getRequestedSessionId()).thenReturn("AHAHAHAH\0\0AHAHAHA");
+			
+			try {
+				request.getRequestedSessionId();
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+			}
+		}
+	}
 }
