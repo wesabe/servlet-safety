@@ -475,4 +475,40 @@ public class SafeRequestTest {
 			}
 		}
 	}
+	
+	public static class Getting_A_Param_Value extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+			
+			when(servletRequest.getParameter("dingo")).thenReturn("woo");
+			when(servletRequest.getParameter("malice")).thenReturn("MAL\0\0ICE");
+		}
+		
+		@Test
+		public void itPassesValidParametersStraightThrough() throws Exception {
+			assertEquals("woo", request.getParameter("dingo"));
+		}
+		
+		@Test
+		public void itThrowsABadRequestExceptionOnInvalidValues() throws Exception {
+			try {
+				request.getParameter("malice");
+				fail("should have thrown a BadRequestException, but didn't");
+			} catch (BadRequestException e) {
+				assertSame(servletRequest, e.getBadRequest());
+			}
+		}
+		
+		@Test
+		public void itThrowsAnIllegalArgumentExceptionWhenAskedForTheValueOfAMalformedParamName() throws Exception {
+			try {
+				request.getParameter("weird\0");
+				fail("should have thrown an IllegalArgumentException, but didn't");
+			} catch (IllegalArgumentException e) {
+				assertTrue(true);
+			}
+		}
+	}
 }

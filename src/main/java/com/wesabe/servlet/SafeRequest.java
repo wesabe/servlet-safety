@@ -25,6 +25,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	private static final UriNormalizer URI_NORMALIZER = new UriNormalizer();
 	private static final QueryStringNormalizer QUERY_STRING_NORMALIZER = new QueryStringNormalizer();
 	private static final ParameterNameNormalizer PARAM_NAME_NORMALIZER = new ParameterNameNormalizer();
+	private static final ParameterValueNormalizer PARAM_VALUE_NORMALIZER = new ParameterValueNormalizer();
 	
 	private final HttpServletRequest request;
 	
@@ -138,9 +139,21 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public String getParameter(String name) {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize parameter values
-		// param value = ^[a-zA-Z0-9.\\-\\/+=_ ]*$
-		throw new UnsupportedOperationException();
+		final String validName = getValidParameterName(name);
+		
+		try {
+			return PARAM_VALUE_NORMALIZER.normalize(super.getParameter(validName));
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
+	}
+
+	private String getValidParameterName(String name) {
+		try {
+			return PARAM_NAME_NORMALIZER.normalize(name);
+		} catch (ValidationException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 	
 	@Override
