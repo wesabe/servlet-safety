@@ -111,13 +111,11 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	}
 
 	private String getValidHeaderName(String name) {
-		final String validName;
 		try {
-			validName = HEADER_NAME_NORMALIZER.normalize(name);
+			return HEADER_NAME_NORMALIZER.normalize(name);
 		} catch (ValidationException e) {
 			throw new IllegalArgumentException(e);
 		}
-		return validName;
 	}
 	
 	@Override
