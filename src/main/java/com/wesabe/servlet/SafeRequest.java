@@ -247,8 +247,9 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public StringBuffer getRequestURL() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize request url
-		throw new UnsupportedOperationException();
+		// REVIEW coda@wesabe.com -- Apr 13, 2009: Figure out how best to filter HttpServletRequest#getRequestURL().
+		// ESAPI just punts on the issue -- should we automatically assemble it ourselves?
+		return super.getRequestURL();
 	}
 	
 	@Override
