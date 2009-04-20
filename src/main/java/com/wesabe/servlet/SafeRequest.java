@@ -30,6 +30,7 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	private static final ParameterValueNormalizer PARAM_VALUE_NORMALIZER = new ParameterValueNormalizer();
 	private static final SessionIdNormalizer SESSION_ID_NORMALIZER = new SessionIdNormalizer();
 	private static final PathInfoNormalizer PATH_INFO_NORMALIZER = new PathInfoNormalizer();
+	private static final ContextPathNormalizer CONTEXT_PATH_NORMALIZER = new ContextPathNormalizer();
 	
 	private final HttpServletRequest request;
 	
@@ -40,9 +41,11 @@ public class SafeRequest extends HttpServletRequestWrapper {
 	
 	@Override
 	public String getContextPath() {
-		// TODO coda@wesabe.com -- Apr 6, 2009: sanitize context path
-		// path =~ ^[a-zA-Z0-9.\\-_]$
-		throw new UnsupportedOperationException();
+		try {
+			return CONTEXT_PATH_NORMALIZER.normalize(super.getContextPath());
+		} catch (ValidationException e) {
+			throw new BadRequestException(request, e);
+		}
 	}
 	
 	@Override
