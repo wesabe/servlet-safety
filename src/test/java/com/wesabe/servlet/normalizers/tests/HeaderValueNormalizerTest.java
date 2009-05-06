@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -16,7 +17,7 @@ public class HeaderValueNormalizerTest {
 		
 		@Test
 		public void itPassesTheValueThrough() throws Exception {
-			assertEquals("woo", normalizer.normalize("woo"));
+			assertThat(normalizer.normalize("woo"), is("woo"));
 		}
 	}
 	
@@ -29,7 +30,7 @@ public class HeaderValueNormalizerTest {
 				normalizer.normalize("wo\0o");
 				fail("should have thrown a ValidationException but didn't");
 			} catch (ValidationException e) {
-				assertEquals("Invalid value: wo\0o (not a valid HTTP header value)", e.getMessage());
+				assertThat(e.getMessage(), is("Invalid value: wo\0o (not a valid HTTP header value)"));
 			}
 		}
 	}

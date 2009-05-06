@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -14,13 +15,13 @@ public class ValidationExceptionTest {
 		@Test
 		public void itHasAValue() throws Exception {
 			ValidationException exception = new ValidationException("200", "is even");
-			assertEquals("200", exception.getValue());
+			assertThat((String) exception.getValue(), is("200"));
 		}
 		
 		@Test
 		public void itHasADescriptiveMessage() throws Exception {
 			ValidationException exception = new ValidationException("200", "is even");
-			assertEquals("Invalid value: 200 (is even)", exception.getMessage());
+			assertThat(exception.getMessage(), is("Invalid value: 200 (is even)"));
 		}
 	}
 	
@@ -29,14 +30,14 @@ public class ValidationExceptionTest {
 		public void itHasADescriptiveMessage() throws Exception {
 			Exception cause = new Exception("eff");
 			ValidationException exception = new ValidationException("200", cause);
-			assertEquals("Invalid value: 200 (eff)", exception.getMessage());
+			assertThat(exception.getMessage(), is("Invalid value: 200 (eff)"));
 		}
 		
 		@Test
 		public void itHasACause() throws Exception {
 			Exception cause = new Exception("eff");
 			ValidationException exception = new ValidationException("200", cause);
-			assertEquals(cause, exception.getCause());
+			assertThat(exception.getCause(), is((Throwable) cause));
 		}
 	}
 }

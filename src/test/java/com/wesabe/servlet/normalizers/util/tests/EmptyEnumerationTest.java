@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.util.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import java.util.Enumeration;
@@ -19,7 +20,7 @@ public class EmptyEnumerationTest {
 		
 		@Test
 		public void itHasNoNextElement() throws Exception {
-			assertFalse(empty.hasMoreElements());
+			assertThat(empty.hasMoreElements(), is(false));
 		}
 		
 		@Test

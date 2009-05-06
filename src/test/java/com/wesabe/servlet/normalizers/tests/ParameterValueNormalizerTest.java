@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -16,7 +17,7 @@ public class ParameterValueNormalizerTest {
 		
 		@Test
 		public void itReturnsTheParamValue() throws Exception {
-			assertEquals("dingo", normalizer.normalize("dingo"));
+			assertThat(normalizer.normalize("dingo"), is("dingo"));
 		}
 	}
 	
@@ -29,7 +30,7 @@ public class ParameterValueNormalizerTest {
 				normalizer.normalize("dingo\0");
 				fail("should have thrown a validation exception, but didn't");
 			} catch (ValidationException e) {
-				assertEquals("Invalid value: dingo\0 (not a valid parameter value)", e.getMessage());
+				assertThat(e.getMessage(), is("Invalid value: dingo\0 (not a valid parameter value)"));
 			}
 		}
 	}

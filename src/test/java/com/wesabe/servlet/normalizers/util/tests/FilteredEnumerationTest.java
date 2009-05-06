@@ -1,6 +1,8 @@
 package com.wesabe.servlet.normalizers.util.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+import static org.junit.matchers.JUnitMatchers.*;
 
 import java.util.Collections;
 import java.util.Enumeration;
@@ -10,11 +12,9 @@ import java.util.NoSuchElementException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
-
 import org.junit.runner.RunWith;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.wesabe.servlet.normalizers.util.FilteredEnumeration;
 
@@ -42,7 +42,8 @@ public class FilteredEnumerationTest {
 			while (filteredStrings.hasMoreElements()) {
 				enumeratedStrings.add(filteredStrings.nextElement());
 			}
-			assertEquals(ImmutableList.of("one", "three"), enumeratedStrings);
+			assertThat(enumeratedStrings, hasItems("one", "three"));
+			assertThat(enumeratedStrings, not(hasItem("two")));
 		}
 		
 		@Test

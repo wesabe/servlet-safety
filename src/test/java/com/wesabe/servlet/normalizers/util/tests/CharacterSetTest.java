@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.util.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -16,24 +17,24 @@ public class CharacterSetTest {
 		
 		@Test
 		public void itContainsSomeCharacters() throws Exception {
-			assertTrue(chars.contains(Character.valueOf('c')));
+			assertThat(chars.contains(Character.valueOf('c')), is(true));
 		}
 		
 		@Test
 		public void itDoesntContainSomeCharacters() throws Exception {
-			assertFalse(chars.contains(Character.valueOf('z')));
+			assertThat(chars.contains(Character.valueOf('z')), is(false));
 		}
 		
 		@Test
 		public void itCanHandlePrimitives() throws Exception {
-			assertTrue(chars.contains('c'));
-			assertFalse(chars.contains('D'));
+			assertThat(chars.contains('c'), is(true));
+			assertThat(chars.contains('D'), is(false));
 		}
 		
 		@Test
 		public void itTestsForComposition() throws Exception {
-			assertTrue(chars.composes("dddbbccdd"));
-			assertFalse(chars.composes("dddbb1ccdd"));
+			assertThat(chars.composes("dddbbccdd"), is(true));
+			assertThat(chars.composes("dddbb1ccdd"), is(false));
 		}
 	}
 	
@@ -42,18 +43,18 @@ public class CharacterSetTest {
 		
 		@Test
 		public void itContainsSomeCharacters() throws Exception {
-			assertTrue(chars.contains(Character.valueOf('c')));
+			assertThat(chars.contains(Character.valueOf('c')), is(true));
 		}
 		
 		@Test
 		public void itDoesntContainSomeCharacters() throws Exception {
-			assertFalse(chars.contains(Character.valueOf('z')));
+			assertThat(chars.contains(Character.valueOf('z')), is(false));
 		}
 		
 		@Test
 		public void itCanHandlePrimitives() throws Exception {
-			assertTrue(chars.contains('c'));
-			assertFalse(chars.contains('D'));
+			assertThat(chars.contains('c'), is(true));
+			assertThat(chars.contains('D'), is(false));
 		}
 	}
 }

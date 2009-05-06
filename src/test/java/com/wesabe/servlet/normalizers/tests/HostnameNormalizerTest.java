@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -16,7 +17,7 @@ public class HostnameNormalizerTest {
 		
 		@Test
 		public void itReturnsTheOriginalHostname() throws Exception {
-			assertEquals("example.com", normalizer.normalize("example.com"));
+			assertThat(normalizer.normalize("example.com"), is("example.com"));
 		}
 	}
 	
@@ -29,7 +30,7 @@ public class HostnameNormalizerTest {
 				normalizer.normalize("examp\nle.com");
 				fail("should have thrown a validation exception, but didn't");
 			} catch (ValidationException e) {
-				assertEquals("Invalid value: examp\nle.com (not a valid hostname)", e.getMessage());
+				assertThat(e.getMessage(), is("Invalid value: examp\nle.com (not a valid hostname)"));
 			}
 		}
 	}
@@ -43,7 +44,7 @@ public class HostnameNormalizerTest {
 				normalizer.normalize("example..com");
 				fail("should have thrown a validation exception, but didn't");
 			} catch (ValidationException e) {
-				assertEquals("Invalid value: example..com (not a valid hostname)", e.getMessage());
+				assertThat(e.getMessage(), is("Invalid value: example..com (not a valid hostname)"));
 			}
 		}
 	}

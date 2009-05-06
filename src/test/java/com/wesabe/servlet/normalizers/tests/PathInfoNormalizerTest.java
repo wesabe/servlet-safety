@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -16,7 +17,7 @@ public class PathInfoNormalizerTest {
 		
 		@Test
 		public void itReturnsTheOriginalPath() throws Exception {
-			assertEquals("blee", normalizer.normalize("blee"));
+			assertThat(normalizer.normalize("blee"), is("blee"));
 		}
 	}
 	
@@ -29,7 +30,7 @@ public class PathInfoNormalizerTest {
 				normalizer.normalize("bloo\0");
 				fail("should have thrown a validation exception, but didn't");
 			} catch (ValidationException e) {
-				assertEquals("Invalid value: bloo\0 (not a valid path)", e.getMessage());
+				assertThat(e.getMessage(), is("Invalid value: bloo\0 (not a valid path)"));
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -17,7 +18,7 @@ public class MethodNormalizerTest {
 		
 		@Test
 		public void itReturnsTheOriginalString() throws Exception {
-			assertEquals("GET", normalizer.normalize("GET"));
+			assertThat(normalizer.normalize("GET"), is("GET"));
 		}
 	}
 	
@@ -26,7 +27,7 @@ public class MethodNormalizerTest {
 		
 		@Test
 		public void itReturnsTheMethodInUppcase() throws Exception {
-			assertEquals("GET", normalizer.normalize("get"));
+			assertThat(normalizer.normalize("get"), is("GET"));
 		}
 	}
 	
@@ -39,7 +40,7 @@ public class MethodNormalizerTest {
 				normalizer.normalize("DINGO\nDINGO");
 				fail("should have thrown a ValidationException but didn't");
 			} catch (ValidationException e) {
-				assertEquals("Invalid value: DINGO\nDINGO (not a member of [get, put, post, delete, head, options])", e.getMessage());
+				assertThat(e.getMessage(), is("Invalid value: DINGO\nDINGO (not a member of [get, put, post, delete, head, options])"));
 			}
 		}
 	}

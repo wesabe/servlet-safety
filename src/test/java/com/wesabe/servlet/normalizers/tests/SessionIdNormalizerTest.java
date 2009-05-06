@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -16,7 +17,7 @@ public class SessionIdNormalizerTest {
 		
 		@Test
 		public void itReturnsTheSessionId() throws Exception {
-			assertEquals("AHHDN9910HHDHA", normalizer.normalize("AHHDN9910HHDHA"));
+			assertThat(normalizer.normalize("AHHDN9910HHDHA"), is("AHHDN9910HHDHA"));
 		}
 	}
 	
@@ -29,7 +30,7 @@ public class SessionIdNormalizerTest {
 				normalizer.normalize("AHAHAHA\0");
 				fail("should have thrown a validation exception, but didn't");
 			} catch (ValidationException e) {
-				assertEquals("Invalid value: AHAHAHA\0 (not a valid session ID)", e.getMessage());
+				assertThat(e.getMessage(), is("Invalid value: AHAHAHA\0 (not a valid session ID)"));
 			}
 		}
 	}
@@ -43,7 +44,7 @@ public class SessionIdNormalizerTest {
 				normalizer.normalize("WOO");
 				fail("should have thrown a validation exception, but didn't");
 			} catch (ValidationException e) {
-				assertEquals("Invalid value: WOO (not a valid session ID)", e.getMessage());
+				assertThat(e.getMessage(), is("Invalid value: WOO (not a valid session ID)"));
 			}
 		}
 	}
@@ -57,7 +58,7 @@ public class SessionIdNormalizerTest {
 				normalizer.normalize("WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
 				fail("should have thrown a validation exception, but didn't");
 			} catch (ValidationException e) {
-				assertEquals("Invalid value: WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO (not a valid session ID)", e.getMessage());
+				assertThat(e.getMessage(), is("Invalid value: WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO (not a valid session ID)"));
 			}
 		}
 	}

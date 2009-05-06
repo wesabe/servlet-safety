@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.util.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import java.util.Locale;
@@ -17,37 +18,37 @@ public class CaseInsensitiveSetTest {
 		
 		@Test
 		public void itContainsLowercaseVersionsOfUppercaseStrings() throws Exception {
-			assertTrue(strings.contains("blee"));
+			assertThat(strings.contains("blee"), is(true));
 		}
 		
 		@Test
 		public void itContainsUppercaseVersionsOfUppercaseStrings() throws Exception {
-			assertTrue(strings.contains("BLEE"));
+			assertThat(strings.contains("BLEE"), is(true));
 		}
 		
 		@Test
 		public void itContainsMixedcaseVersionsOfUppercaseStrings() throws Exception {
-			assertTrue(strings.contains("BLee"));
+			assertThat(strings.contains("BLee"), is(true));
 		}
 		
 		@Test
 		public void itDoesNotContainNonStrings() throws Exception {
-			assertFalse(strings.contains(200));
+			assertThat(strings.contains(200), is(false));
 		}
 		
 		@Test
 		public void itHasALocale() throws Exception {
-			assertEquals(Locale.ENGLISH, strings.getLocale());
+			assertThat(strings.getLocale(), is(Locale.ENGLISH));
 		}
 		
 		@Test
 		public void itConvertsStringsToLowercase() throws Exception {
-			assertEquals("woo", strings.lowercase("WOO"));
+			assertThat(strings.lowercase("WOO"), is("woo"));
 		}
 		
 		@Test
 		public void itConvertsStringsToUppercase() throws Exception {
-			assertEquals("WOO", strings.uppercase("woo"));
+			assertThat(strings.uppercase("woo"), is("WOO"));
 		}
 	}
 }

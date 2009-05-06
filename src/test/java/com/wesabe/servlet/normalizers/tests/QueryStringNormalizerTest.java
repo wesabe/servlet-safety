@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -29,22 +30,22 @@ public class QueryStringNormalizerTest {
 	public static class Normalizing_A_Valid_Null_String {
 		@Test
 		public void itPassesItThrough() throws Exception {
-			assertNull(normalize(null));
+			assertThat(normalize(null), is(nullValue()));
 		}
 	}
 	
 	public static class Normalizing_A_Valid_Query_String {
 		@Test
 		public void itPassesItThrough() throws Exception {
-			assertEquals("q=food", normalize("q=food"));
-			assertEquals("q=food&g=two", normalize("q=food&g=two"));
+			assertThat(normalize("q=food"), is("q=food"));
+			assertThat(normalize("q=food&g=two"), is("q=food&g=two"));
 		}
 	}
 	
 	public static class Normalizing_An_Encoded_Query_String {
 		@Test
 		public void itNormalizesTheEncodedCharacters() throws Exception {
-			assertEquals("q=either%2For", normalize("q=either%2for"));
+			assertThat(normalize("q=either%2for"), is("q=either%2For"));
 		}
 	}
 	
@@ -59,14 +60,14 @@ public class QueryStringNormalizerTest {
 	public static class Normalizing_A_Paramless_Query_String {
 		@Test
 		public void itPassesItThrough() throws Exception {
-			assertEquals("food", normalize("food"));
+			assertThat(normalize("food"), is("food"));
 		}
 	}
 	
 	public static class Normalizing_An_Encoded_Paramless_Query_String {
 		@Test
 		public void itNormalizesTheEncodedCharacters() throws Exception {
-			assertEquals("either%2For", normalize("either%2for"));
+			assertThat(normalize("either%2for"), is("either%2For"));
 		}
 	}
 }

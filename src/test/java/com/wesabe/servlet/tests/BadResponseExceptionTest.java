@@ -1,5 +1,6 @@
 package com.wesabe.servlet.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -29,17 +30,17 @@ public class BadResponseExceptionTest {
 		
 		@Test
 		public void itHasACause() throws Exception {
-			assertEquals(cause, exception.getCause());
+			assertThat(exception.getCause(), is((Throwable) cause));
 		}
 		
 		@Test
 		public void itHasAMessage() throws Exception {
-			assertEquals("Bad response", exception.getMessage());
+			assertThat(exception.getMessage(), is("Bad response"));
 		}
 		
 		@Test
 		public void itHasABadResponse() throws Exception {
-			assertSame(response, exception.getBadResponse());
+			assertThat(exception.getBadResponse(), is(sameInstance(response)));
 		}
 	}
 }

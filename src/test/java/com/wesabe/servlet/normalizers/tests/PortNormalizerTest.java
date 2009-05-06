@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -16,8 +17,8 @@ public class PortNormalizerTest {
 		
 		@Test
 		public void itReturnsThePort() throws Exception {
-			assertEquals(30, normalizer.normalize(30));
-			assertEquals(Integer.valueOf(30), normalizer.normalize(Integer.valueOf(30)));
+			assertThat(normalizer.normalize(30), is(30));
+			assertThat(normalizer.normalize(Integer.valueOf(30)), is(Integer.valueOf(30)));
 		}
 	}
 	
@@ -29,8 +30,8 @@ public class PortNormalizerTest {
 			try {
 				normalizer.normalize(139000);
 			} catch (ValidationException e) {
-				assertEquals(139000, e.getValue());
-				assertEquals("Invalid value: 139000 (not a valid port number)", e.getMessage());
+				assertThat((Integer) e.getValue(), is(139000));
+				assertThat(e.getMessage(), is("Invalid value: 139000 (not a valid port number)"));
 			}
 		}
 	}
@@ -43,8 +44,8 @@ public class PortNormalizerTest {
 			try {
 				normalizer.normalize(-139000);
 			} catch (ValidationException e) {
-				assertEquals(-139000, e.getValue());
-				assertEquals("Invalid value: -139000 (not a valid port number)", e.getMessage());
+				assertThat((Integer) e.getValue(), is(-139000));
+				assertThat(e.getMessage(), is("Invalid value: -139000 (not a valid port number)"));
 			}
 		}
 	}

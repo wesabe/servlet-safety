@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -16,7 +17,7 @@ public class SchemeNormalizerTest {
 		
 		@Test
 		public void itReturnsTheSchemeAsLowercase() throws Exception {
-			assertEquals("http", normalizer.normalize("http"));
+			assertThat(normalizer.normalize("http"), is("http"));
 		}
 	}
 	
@@ -25,7 +26,7 @@ public class SchemeNormalizerTest {
 		
 		@Test
 		public void itReturnsTheSchemeAsLowercase() throws Exception {
-			assertEquals("https", normalizer.normalize("HTTPS"));
+			assertThat(normalizer.normalize("HTTPS"), is("https"));
 		}
 	}
 	
@@ -37,8 +38,8 @@ public class SchemeNormalizerTest {
 			try {
 				normalizer.normalize("dingo");
 			} catch (ValidationException e) {
-				assertEquals("dingo", e.getValue());
-				assertEquals("Invalid value: dingo (not a member of [http, https])", e.getMessage());
+				assertThat((String) e.getValue(), is("dingo"));
+				assertThat(e.getMessage(), is("Invalid value: dingo (not a member of [http, https])"));
 			}
 		}
 	}

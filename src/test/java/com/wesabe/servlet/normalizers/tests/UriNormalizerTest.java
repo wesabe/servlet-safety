@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -50,21 +51,21 @@ public class UriNormalizerTest {
 	public static class Normalizing_URIs_With_Encoded_Paths {
 		@Test
 		public void itPassesThemThrough() throws Exception {
-			assertEquals("/tags/either%2For", normalize("/tags/either%2for"));
+			assertThat(normalize("/tags/either%2for"), is("/tags/either%2For"));
 		}
 	}
 	
 	public static class Normalizing_URIs {
 		@Test
 		public void itPassesThemThrough() throws Exception {
-			assertEquals("/tags/food", normalize("/tags/food"));
+			assertThat(normalize("/tags/food"), is("/tags/food"));
 		}
 	}
 	
 	public static class Normalizing_URIs_With_Trailing_Slashes {
 		@Test
 		public void itPassesThemThrough() throws Exception {
-			assertEquals("/tags/food/", normalize("/tags/food/"));
+			assertThat(normalize("/tags/food/"), is("/tags/food/"));
 		}
 	}
 	
@@ -85,14 +86,14 @@ public class UriNormalizerTest {
 	public static class Normalizing_URIs_With_Unnecessarily_Encoded_Characters {
 		@Test
 		public void itReducesThemToAMinimallyEncodedForm() throws Exception {
-			assertEquals("/needless", normalize("/%6e%65%65%64%6c%65%73%73"));
+			assertThat(normalize("/%6e%65%65%64%6c%65%73%73"), is("/needless"));
 		}
 	}
 	
 	public static class Normalizing_URIs_With_Long_UTF8_Characters {
 		@Test
 		public void itNormalizesThemToStandardEncodings() throws Exception {
-			assertEquals("/..%2F..%2F..%2F..%2Fetc/shadow", normalize("/%C0%AE%C0%AE%C0%AF%C0%AE%C0%AE%C0%AF%C0%AE%C0%AE%C0%AF%C0%AE%C0%AE%C0%AFetc/shadow"));
+			assertThat(normalize("/%C0%AE%C0%AE%C0%AF%C0%AE%C0%AE%C0%AF%C0%AE%C0%AE%C0%AF%C0%AE%C0%AE%C0%AFetc/shadow"), is("/..%2F..%2F..%2F..%2Fetc/shadow"));
 		}
 	}
 	

@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -34,13 +35,12 @@ public class CookieNormalizerTest {
 		@Test
 		public void itReturnsAnEquivalentCookie() throws Exception {
 			final Cookie normalizedCookie = normalizer.normalize(cookie);
-			assertEquals(cookie.getName(), normalizedCookie.getName());
-			assertEquals(cookie.getValue(), normalizedCookie.getValue());
-			assertEquals(cookie.getDomain(), normalizedCookie.getDomain());
-			assertEquals(cookie.getMaxAge(), normalizedCookie.getMaxAge());
-			assertEquals(cookie.getPath(), normalizedCookie.getPath());
-			assertEquals(cookie.getVersion(), normalizedCookie.getVersion());
-			assertEquals(cookie.getSecure(), normalizedCookie.getSecure());
+			assertThat(normalizedCookie.getValue(), is(cookie.getValue()));
+			assertThat(normalizedCookie.getDomain(), is(cookie.getDomain()));
+			assertThat(normalizedCookie.getMaxAge(), is(cookie.getMaxAge()));
+			assertThat(normalizedCookie.getPath(), is(cookie.getPath()));
+			assertThat(normalizedCookie.getVersion(), is(cookie.getVersion()));
+			assertThat(normalizedCookie.getSecure(), is(cookie.getSecure()));
 		}
 		
 	}
@@ -63,7 +63,7 @@ public class CookieNormalizerTest {
 				normalizer.normalize(cookie);
 				fail("should have thrown a ValidationException but didn't");
 			} catch (ValidationException e) {
-				assertEquals("Invalid value: sessi\0nid (not a valid cookie name)", e.getMessage());
+				assertThat(e.getMessage(), is("Invalid value: sessi\0nid (not a valid cookie name)"));
 			}
 		}
 		
@@ -88,7 +88,7 @@ public class CookieNormalizerTest {
 				normalizer.normalize(cookie);
 				fail("should have thrown a ValidationException but didn't");
 			} catch (ValidationException e) {
-				assertEquals("Invalid value: DEADBEE\0F (not a valid cookie value)", e.getMessage());
+				assertThat(e.getMessage(), is("Invalid value: DEADBEE\0F (not a valid cookie value)"));
 			}
 		}
 	}
@@ -113,7 +113,7 @@ public class CookieNormalizerTest {
 				normalizer.normalize(cookie);
 				fail("should have thrown a ValidationException but didn't");
 			} catch (ValidationException e) {
-				assertEquals("Invalid value: ex\0ample.com (not a valid hostname)", e.getMessage());
+				assertThat(e.getMessage(), is("Invalid value: ex\0ample.com (not a valid hostname)"));
 			}
 		}
 	}
@@ -139,7 +139,7 @@ public class CookieNormalizerTest {
 				normalizer.normalize(cookie);
 				fail("should have thrown a ValidationException but didn't");
 			} catch (ValidationException e) {
-				assertEquals("Invalid value: /\0 (not a valid cookie path)", e.getMessage());
+				assertThat(e.getMessage(), is("Invalid value: /\0 (not a valid cookie path)"));
 			}
 		}
 	}

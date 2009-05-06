@@ -1,5 +1,6 @@
 package com.wesabe.servlet.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -32,17 +33,17 @@ public class BadRequestExceptionTest {
 		
 		@Test
 		public void itHasACause() throws Exception {
-			assertEquals(cause, exception.getCause());
+			assertThat(exception.getCause(), is((Throwable) cause));
 		}
 		
 		@Test
 		public void itHasAMessage() throws Exception {
-			assertEquals("Bad request: POST to /woohoo from 1.2.3.4", exception.getMessage());
+			assertThat(exception.getMessage(), is("Bad request: POST to /woohoo from 1.2.3.4"));
 		}
 		
 		@Test
 		public void itHasABadRequest() throws Exception {
-			assertSame(request, exception.getBadRequest());
+			assertThat(exception.getBadRequest(), is(sameInstance(request)));
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package com.wesabe.servlet.normalizers.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -16,7 +17,7 @@ public class ContextPathNormalizerTest {
 		
 		@Test
 		public void itReturnsThePath() throws Exception {
-			assertEquals("path", normalizer.normalize("path"));
+			assertThat(normalizer.normalize("path"), is("path"));
 		}
 	}
 	
@@ -29,7 +30,7 @@ public class ContextPathNormalizerTest {
 				normalizer.normalize("path\0");
 				fail("should have thrown a validation exception, but didn't");
 			} catch (ValidationException e) {
-				assertEquals("Invalid value: path\0 (not a valid context path)", e.getMessage());
+				assertThat(e.getMessage(), is("Invalid value: path\0 (not a valid context path)"));
 			}
 			
 		}

@@ -1,6 +1,8 @@
 package com.wesabe.servlet.tests;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+import static org.junit.matchers.JUnitMatchers.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
@@ -19,7 +21,6 @@ import org.junit.runner.RunWith;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.wesabe.servlet.BadRequestException;
 import com.wesabe.servlet.SafeRequest;
@@ -55,7 +56,7 @@ public class SafeRequestTest {
 		public void itNormalizesTheMethodName() throws Exception {
 			when(servletRequest.getMethod()).thenReturn("get");
 			
-			assertEquals("GET", request.getMethod());
+			assertThat(request.getMethod(), is("GET"));
 			
 			verify(servletRequest).getMethod();
 		}
@@ -68,7 +69,7 @@ public class SafeRequestTest {
 				request.getMethod();
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 	}
@@ -84,7 +85,7 @@ public class SafeRequestTest {
 		public void itNormalizesTheScheme() throws Exception {
 			when(servletRequest.getScheme()).thenReturn("http");
 			
-			assertEquals("http", request.getScheme());
+			assertThat(request.getScheme(), is("http"));
 			
 			verify(servletRequest).getScheme();
 		}
@@ -97,7 +98,7 @@ public class SafeRequestTest {
 				request.getScheme();
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 	}
@@ -113,7 +114,7 @@ public class SafeRequestTest {
 		public void itNormalizesTheServerPort() throws Exception {
 			when(servletRequest.getServerPort()).thenReturn(80);
 			
-			assertEquals(80, request.getServerPort());
+			assertThat(request.getServerPort(), is(80));
 			
 			verify(servletRequest).getServerPort();
 		}
@@ -126,7 +127,7 @@ public class SafeRequestTest {
 				request.getServerPort();
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 	}
@@ -142,7 +143,7 @@ public class SafeRequestTest {
 		public void itReturnsAnyParsedDateHeader() throws Exception {
 			when(servletRequest.getDateHeader("Last-Modified")).thenReturn(80L);
 			
-			assertEquals(80, request.getDateHeader("Last-Modified"));
+			assertThat(request.getDateHeader("Last-Modified"), is(80L));
 			
 			verify(servletRequest).getDateHeader("Last-Modified");
 		}
@@ -155,8 +156,8 @@ public class SafeRequestTest {
 				request.getDateHeader("Last-Modified");
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
-				assertTrue(e.getCause() instanceof IllegalArgumentException);
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
+				assertThat(e.getCause(), is(IllegalArgumentException.class));
 			}
 		}
 	}
@@ -172,7 +173,7 @@ public class SafeRequestTest {
 		public void itReturnsAnyParsedIntHeader() throws Exception {
 			when(servletRequest.getIntHeader("Age")).thenReturn(200);
 			
-			assertEquals(200, request.getIntHeader("Age"));
+			assertThat(request.getIntHeader("Age"), is(200));
 			
 			verify(servletRequest).getIntHeader("Age");
 		}
@@ -185,8 +186,8 @@ public class SafeRequestTest {
 				request.getIntHeader("Age");
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
-				assertTrue(e.getCause() instanceof IllegalArgumentException);
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
+				assertThat(e.getCause(), is(IllegalArgumentException.class));
 			}
 		}
 	}
@@ -202,7 +203,7 @@ public class SafeRequestTest {
 		public void itNormalizesTheServerName() throws Exception {
 			when(servletRequest.getServerName()).thenReturn("example.com");
 			
-			assertEquals("example.com", request.getServerName());
+			assertThat(request.getServerName(), is("example.com"));
 			
 			verify(servletRequest).getServerName();
 		}
@@ -215,7 +216,7 @@ public class SafeRequestTest {
 				request.getServerName();
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 	}
@@ -235,7 +236,7 @@ public class SafeRequestTest {
 		public void itPassesThroughIfPathStartsWithWebInf() throws Exception {
 			when(servletRequest.getRequestDispatcher("WEB-INF/thing")).thenReturn(dispatcher);
 			
-			assertEquals(dispatcher, request.getRequestDispatcher("WEB-INF/thing"));
+			assertThat(request.getRequestDispatcher("WEB-INF/thing"), is(dispatcher));
 			
 			verify(servletRequest).getRequestDispatcher("WEB-INF/thing");
 		}
@@ -244,7 +245,7 @@ public class SafeRequestTest {
 		public void itReturnsNullIfPathDoesNotStartWithWebInf() throws Exception {
 			when(servletRequest.getRequestDispatcher(anyString())).thenReturn(dispatcher);
 			
-			assertNull(request.getRequestDispatcher("../WEB-INF/thing"));
+			assertThat(request.getRequestDispatcher("../WEB-INF/thing"), is(nullValue()));
 			
 			verify(servletRequest, never()).getRequestDispatcher(anyString());
 		}
@@ -261,8 +262,7 @@ public class SafeRequestTest {
 		public void itEnumeratesValidHeaders() throws Exception {
 			when(servletRequest.getHeaderNames()).thenReturn(Collections.enumeration(ImmutableList.of("Accept", "User-Agent")));
 			
-			assertEquals(ImmutableList.of("Accept", "User-Agent"), enumerationToList(request.getHeaderNames()));
-			
+			assertThat(enumerationToList(request.getHeaderNames()), hasItems("Accept", "User-Agent"));
 		}
 		
 		@Test
@@ -273,7 +273,7 @@ public class SafeRequestTest {
 				request.getHeaderNames();
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 	}
@@ -290,7 +290,7 @@ public class SafeRequestTest {
 		
 		@Test
 		public void itPassesValidHeadersStraightThrough() throws Exception {
-			assertEquals("application/json", request.getHeader("Accept"));
+			assertThat(request.getHeader("Accept"), is("application/json"));
 		}
 		
 		@Test
@@ -299,7 +299,7 @@ public class SafeRequestTest {
 				request.getHeader("User-Agent");
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 		
@@ -325,8 +325,8 @@ public class SafeRequestTest {
 		public void itEnumeratesValidHeaderValues() throws Exception {
 			when(servletRequest.getHeaders("Accept")).thenReturn(Collections.enumeration(ImmutableList.of("application/json", "application/xml")));
 			
-			assertEquals(ImmutableList.of("application/json", "application/xml"), enumerationToList(request.getHeaders("Accept")));
 			
+			assertThat(enumerationToList(request.getHeaders("Accept")), hasItems("application/json", "application/xml"));
 		}
 		
 		@Test
@@ -337,7 +337,7 @@ public class SafeRequestTest {
 				request.getHeaders("Accept");
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 		
@@ -363,15 +363,15 @@ public class SafeRequestTest {
 		public void itReturnsAnEmptyArrayIsCookiesAreNull() throws Exception {
 			when(servletRequest.getCookies()).thenReturn(null);
 			
-			assertArrayEquals(new Cookie[0], request.getCookies());
+			assertThat(request.getCookies().length, is(0));
 		}
 		
 		@Test
 		public void itReturnsAnArrayOfValidCookies() throws Exception {
 			when(servletRequest.getCookies()).thenReturn(new Cookie[] { new Cookie("sessionid", "blorp") });
 			
-			assertEquals("sessionid", request.getCookies()[0].getName());
-			assertEquals("blorp", request.getCookies()[0].getValue());
+			assertThat(request.getCookies()[0].getName(), is("sessionid"));
+			assertThat(request.getCookies()[0].getValue(), is("blorp"));
 		}
 		
 		@Test
@@ -384,7 +384,7 @@ public class SafeRequestTest {
 				request.getCookies();
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 	}
@@ -400,7 +400,7 @@ public class SafeRequestTest {
 		public void itNormalizesTheURI() throws Exception {
 			when(servletRequest.getRequestURI()).thenReturn("/blah%7d");
 			
-			assertEquals("/blah%7D", request.getRequestURI());
+			assertThat(request.getRequestURI(), is("/blah%7D"));
 		}
 		
 		@Test
@@ -411,7 +411,7 @@ public class SafeRequestTest {
 				request.getRequestURI();
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 	}
@@ -427,14 +427,14 @@ public class SafeRequestTest {
 		public void itPassesNullThrough() throws Exception {
 			when(servletRequest.getQueryString()).thenReturn(null);
 			
-			assertNull(request.getQueryString());
+			assertThat(request.getQueryString(), is(nullValue()));
 		}
 		
 		@Test
 		public void itNormalizesTheQueryString() throws Exception {
 			when(servletRequest.getQueryString()).thenReturn("j=blah%7d");
 			
-			assertEquals("j=blah%7D", request.getQueryString());
+			assertThat(request.getQueryString(), is("j=blah%7D"));
 		}
 		
 		@Test
@@ -445,7 +445,7 @@ public class SafeRequestTest {
 				request.getQueryString();
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 	}
@@ -461,8 +461,7 @@ public class SafeRequestTest {
 		public void itEnumeratesValidHeaders() throws Exception {
 			when(servletRequest.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of("dingo", "woo")));
 			
-			assertEquals(ImmutableList.of("dingo", "woo"), enumerationToList(request.getParameterNames()));
-			
+			assertThat(enumerationToList(request.getParameterNames()), hasItems("dingo", "woo"));
 		}
 		
 		@Test
@@ -473,7 +472,7 @@ public class SafeRequestTest {
 				request.getParameterNames();
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 	}
@@ -490,7 +489,7 @@ public class SafeRequestTest {
 		
 		@Test
 		public void itPassesValidParametersStraightThrough() throws Exception {
-			assertEquals("woo", request.getParameter("dingo"));
+			assertThat(request.getParameter("dingo"), is("woo"));
 		}
 		
 		@Test
@@ -499,7 +498,7 @@ public class SafeRequestTest {
 				request.getParameter("malice");
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 		
@@ -526,7 +525,8 @@ public class SafeRequestTest {
 		
 		@Test
 		public void itPassesValidParametersStraightThrough() throws Exception {
-			assertArrayEquals(new String[] { "woo" }, request.getParameterValues("dingo"));
+			assertThat(request.getParameterValues("dingo").length, is(1));
+			assertThat(request.getParameterValues("dingo")[0], is("woo"));
 		}
 		
 		@Test
@@ -535,7 +535,7 @@ public class SafeRequestTest {
 				request.getParameterValues("malice");
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 		
@@ -561,8 +561,7 @@ public class SafeRequestTest {
 		public void itPassesValidParametersStraightThrough() throws Exception {
 			when(servletRequest.getParameterMap()).thenReturn(ImmutableMap.of("dingo", new String[] { "woo" }));
 			
-			assertEquals(ImmutableSet.of("dingo"), request.getParameterMap().keySet());
-			assertArrayEquals(new String[] { "woo" }, request.getParameterMap().get("dingo"));
+			assertThat(request.getParameterMap().keySet(), hasItem("dingo"));
 		}
 		
 		@Test
@@ -573,7 +572,7 @@ public class SafeRequestTest {
 				request.getParameterMap();
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 	}
@@ -589,7 +588,7 @@ public class SafeRequestTest {
 		public void itPassesValidSessionIdsThrough() throws Exception {
 			when(servletRequest.getRequestedSessionId()).thenReturn("AHAHAHAHAHAHAHA");
 			
-			assertEquals("AHAHAHAHAHAHAHA", request.getRequestedSessionId());
+			assertThat(request.getRequestedSessionId(), is("AHAHAHAHAHAHAHA"));
 		}
 		
 		@Test
@@ -600,7 +599,7 @@ public class SafeRequestTest {
 				request.getRequestedSessionId();
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 	}
@@ -616,7 +615,7 @@ public class SafeRequestTest {
 		public void itPassesValidPathsThrough() throws Exception {
 			when(servletRequest.getPathInfo()).thenReturn("whee");
 			
-			assertEquals("whee", request.getPathInfo());
+			assertThat(request.getPathInfo(), is("whee"));
 		}
 		
 		@Test
@@ -627,7 +626,7 @@ public class SafeRequestTest {
 				request.getPathInfo();
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 	}
@@ -643,7 +642,7 @@ public class SafeRequestTest {
 		public void itPassesValidPathsThrough() throws Exception {
 			when(servletRequest.getContextPath()).thenReturn("whee");
 			
-			assertEquals("whee", request.getContextPath());
+			assertThat(request.getContextPath(), is("whee"));
 		}
 		
 		@Test
@@ -654,7 +653,7 @@ public class SafeRequestTest {
 				request.getContextPath();
 				fail("should have thrown a BadRequestException, but didn't");
 			} catch (BadRequestException e) {
-				assertSame(servletRequest, e.getBadRequest());
+				assertThat(e.getBadRequest(), is(sameInstance(servletRequest)));
 			}
 		}
 	}
