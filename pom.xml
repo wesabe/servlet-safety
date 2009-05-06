@@ -36,11 +36,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-        	<groupId>org.slf4j</groupId>
-        	<artifactId>slf4j-jdk14</artifactId>
-        	<version>1.5.6</version>
-        	<scope>test</scope>
-        </dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
+			<version>1.5.6</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -59,6 +59,18 @@
 				<configuration>
 					<encoding>UTF-8</encoding>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
