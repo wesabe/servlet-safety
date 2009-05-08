@@ -62,6 +62,10 @@ public class CharacterSet extends ForwardingSet<Character> {
 	 * characters in {@code this}.
 	 */
 	public boolean composes(String s) {
+		if (s == null) {
+			return false;
+		}
+		
 		for (int i = 0; i < s.length(); i++) {
 			if (!contains(s.charAt(i))) {
 				return false;

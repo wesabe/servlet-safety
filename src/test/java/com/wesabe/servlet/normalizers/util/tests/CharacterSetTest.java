@@ -35,6 +35,7 @@ public class CharacterSetTest {
 		public void itTestsForComposition() throws Exception {
 			assertThat(chars.composes("dddbbccdd"), is(true));
 			assertThat(chars.composes("dddbb1ccdd"), is(false));
+			assertThat(chars.composes(null), is(false));
 		}
 	}
 	
@@ -55,6 +56,7 @@ public class CharacterSetTest {
 		public void itCanHandlePrimitives() throws Exception {
 			assertThat(chars.contains('c'), is(true));
 			assertThat(chars.contains('D'), is(false));
+			assertThat(chars.composes(null), is(false));
 		}
 	}
 }
