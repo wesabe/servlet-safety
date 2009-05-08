@@ -34,4 +34,13 @@ public class HeaderValueNormalizerTest {
 			}
 		}
 	}
+	
+	public static class Normalizing_Null_Header_Values {
+		private final HeaderValueNormalizer normalizer = new HeaderValueNormalizer();
+		
+		@Test
+		public void itAllowsNullValues() throws Exception {
+			assertThat(normalizer.normalize(null), is(nullValue()));
+		}
+	}
 }

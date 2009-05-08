@@ -12,6 +12,10 @@ public class HeaderValueNormalizer implements Normalizer<String> {
 	
 	@Override
 	public String normalize(String value) throws ValidationException {
+		if (value == null) {
+			return value;
+		}
+		
 		if (VALID_CHARACTERS.composes(value)) {
 			return value;
 		}
