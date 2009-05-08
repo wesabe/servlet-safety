@@ -657,4 +657,17 @@ public class SafeRequestTest {
 			}
 		}
 	}
+	
+	public static class Getting_A_Human_Readable_Representation extends Context {
+		@Before
+		@Override
+		public void setup() throws Exception {
+			super.setup();
+		}
+		
+		@Test
+		public void itPassesThrough() throws Exception {
+			assertThat(request.toString(), is(servletRequest.toString()));
+		}
+	}
 }

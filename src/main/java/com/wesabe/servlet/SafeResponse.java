@@ -105,5 +105,9 @@ public class SafeResponse extends HttpServletResponseWrapper {
 	public String encodeURL(String url) {
 		return url;
 	}
-
+	
+	@Override
+	public String toString() {
+		return response.toString();
+	}
 }
