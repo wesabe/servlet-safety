@@ -6,6 +6,8 @@ import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -85,6 +87,8 @@ public class ErrorReporterFilterTest {
 		
 		@Before
 		public void setup() throws Exception {
+			Logger.getLogger("com.wesabe").setLevel(Level.OFF);
+			
 			this.request = mock(HttpServletRequest.class);
 			this.response = mock(HttpServletResponse.class);
 			this.chain = mock(FilterChain.class);

@@ -2,6 +2,8 @@ package com.wesabe.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -21,6 +23,7 @@ import com.wesabe.servlet.errors.ErrorReporter;
  * @author coda
  */
 public class ErrorReporterFilter implements Filter {
+	private static final Logger LOGGER = Logger.getLogger(ErrorReporterFilter.class.getCanonicalName());
 	private final ErrorReporter reporter;
 	private final String errorMessage;
 	
@@ -48,6 +51,13 @@ public class ErrorReporterFilter implements Filter {
 		try {
 			chain.doFilter(req, res);
 		} catch (final Throwable e) {
+			final String logMsg = String.format(
+				"Unhandled exception raised while handling %s %s",
+				request.getMethod(),
+				request.getRequestURL()
+			);
+			LOGGER.log(Level.SEVERE, logMsg, e);
+			
 			response.reset();
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			final PrintWriter writer = response.getWriter();
