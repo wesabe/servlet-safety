@@ -48,6 +48,9 @@ public class SendmailErrorReporter extends ErrorReporter {
 	@Override
 	public void deliver(Message message, HttpServletRequest request, HttpServletResponse response,
 			Throwable e) throws IOException, MessagingException {
+		// From SENDMAIL(1):
+		//     -t     Extract recipients from message headers. These are added
+		//            to any recipients specified on the command line.
 		final Process sendmail = new ProcessBuilder(sendmailPath, "-t").start();
 		final BufferedOutputStream output = new BufferedOutputStream(sendmail.getOutputStream());
 		message.writeTo(output);
