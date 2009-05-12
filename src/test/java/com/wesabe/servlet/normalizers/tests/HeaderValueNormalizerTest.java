@@ -19,6 +19,11 @@ public class HeaderValueNormalizerTest {
 		public void itPassesTheValueThrough() throws Exception {
 			assertThat(normalizer.normalize("woo"), is("woo"));
 		}
+		
+		@Test
+		public void itAllowsDoubleQuotes() throws Exception {
+			System.err.println(normalizer.normalize("Basic realm=\"Wesabe API\""));
+		}
 	}
 	
 	public static class Normalizing_Invalid_Header_Values {

@@ -8,7 +8,7 @@ import com.wesabe.servlet.normalizers.util.CharacterSet;
  * @author coda
  */
 public class HeaderValueNormalizer implements Normalizer<String> {
-	private static final CharacterSet VALID_CHARACTERS = CharacterSet.of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()-=*.?;,+/:&_ ");
+	private static final CharacterSet VALID_CHARACTERS = CharacterSet.of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()-=*.?;,+/:&_ \"");
 	
 	@Override
 	public String normalize(String value) throws ValidationException {
