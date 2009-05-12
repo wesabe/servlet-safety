@@ -22,7 +22,10 @@ public class HeaderValueNormalizerTest {
 		
 		@Test
 		public void itAllowsDoubleQuotes() throws Exception {
-			System.err.println(normalizer.normalize("Basic realm=\"Wesabe API\""));
+			assertThat(
+				normalizer.normalize("Basic realm=\"Wesabe API\""),
+				is("Basic realm=\"Wesabe API\"")
+			);
 		}
 	}
 	
