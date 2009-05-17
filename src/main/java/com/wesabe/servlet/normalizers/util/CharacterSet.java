@@ -1,18 +1,11 @@
 package com.wesabe.servlet.normalizers.util;
 
-import java.util.Set;
-
-import com.google.common.collect.ForwardingSet;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-
 /**
- * A set of characters.
+ * A set of characters, designed exclusively for speed of member checking.
  * 
  * @author coda
  */
-public class CharacterSet extends ForwardingSet<Character> {
-
+public class CharacterSet {
 	/**
 	 * Creates a character set from an array of {@code char}.
 	 * 
@@ -21,11 +14,7 @@ public class CharacterSet extends ForwardingSet<Character> {
 	 * @return a {@link CharacterSet} containing {@code chars}
 	 */
 	public static CharacterSet of(char... chars) {
-		Builder<Character> builder = ImmutableSet.builder();
-		for (char c : chars) {
-			builder.add(Character.valueOf(c));
-		}
-		return new CharacterSet(builder.build());
+		return of(new String(chars));
 	}
 
 	/**
@@ -36,25 +25,40 @@ public class CharacterSet extends ForwardingSet<Character> {
 	 * @return a {@link CharacterSet} containing the characters in {@code chars}
 	 */
 	public static CharacterSet of(String chars) {
-		return of(chars.toCharArray());
+		char minChar = Character.MAX_VALUE;
+		char maxChar = Character.MIN_VALUE;
+		for (int i = 0; i < chars.length(); i++) {
+			final char c = chars.charAt(i);
+			if (c < minChar) {
+				minChar = c;
+			}
+			if (c > maxChar) {
+				maxChar = c;
+			}
+		}
+		
+		final boolean[] characters = new boolean[maxChar - minChar + 1];
+		for (char i = minChar; i <= maxChar; i++) {
+			characters[i - minChar] = chars.indexOf(i) >= 0;
+		}
+		
+		return new CharacterSet(characters, minChar, maxChar);
 	}
 
-	private final ImmutableSet<Character> characters;
+	private final boolean[] characters;
+	private final char minChar, maxChar;
 
-	private CharacterSet(ImmutableSet<Character> characters) {
+	private CharacterSet(boolean[] characters, char minChar, char maxChar) {
 		this.characters = characters;
-	}
-
-	@Override
-	protected Set<Character> delegate() {
-		return characters;
+		this.minChar = minChar;
+		this.maxChar = maxChar;
 	}
 
 	/**
-	 * A primitive equivalent of {@link #contains(Object)}.
+	 * Returns {@code true} if {@code c} exists in the set.
 	 */
-	public boolean contains(char character) {
-		return characters.contains(Character.valueOf(character));
+	public boolean contains(char c) {
+		return (c >= minChar) && (c <= maxChar) && characters[c - minChar];
 	}
 	
 	/**
